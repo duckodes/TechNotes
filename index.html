@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="res/css/root.css">
+    <link rel="stylesheet" href="res/css/style.css">
+    <title>開發技術文章</title>
+</head>
+
+<body>
+    <div class="layout">
+        <header>開發技術文章</header>
+
+        <main class="content">
+            <aside class="sidebar">
+                <div class="profile">
+                    <img src="https://www.duckode.com/img/duck/duck_192x_144p.png" alt="個人照片" class="avatar" />
+                    <h3>Duckode</h3>
+                    <p>軟體工程師</p>
+                    <p>任職: Jsports-Technologies</p>
+                    <p><a href="mailto:bear90789078@gmail.com">bear90789078@gmail.com</a></p>
+                    <p><a href="https://github.com/duckodes" target="_blank">GitHub</a></p>
+                </div>
+
+                <div class="category-box">
+                    <h2>分類</h2>
+                    <ul id="categoryList"></ul>
+                </div>
+            </aside>
+
+            <section>
+                <div class="container" id="articleContainer"></div>
+                <div class="article-view" id="articleView">
+                    <div class="article-content">
+                        <h2 id="articleTitle"></h2>
+                        <p id="articleBody"></p>
+                        <button class="back-btn">← 返回列表</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer>© 2025 DUCKODE | 技術筆記</footer>
+    </div>
+
+    <script src="res/module/main.js" type="module"></script>
+</body>
+
+</html>

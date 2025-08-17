@@ -1,0 +1,12 @@
+:root {
+    --bg: #0f1117;
+    --card-bg: #1a1c23;
+    --accent: #00bcd4;
+    --text: #e0e0e0;
+    --border: #2c2f36;
+    --radius: 10px;
+}
+
+* {
+    box-sizing: border-box;
+}
