@@ -84,6 +84,7 @@ const main = (async () => {
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        codeAdditional();
     }
 
 
@@ -93,4 +94,41 @@ const main = (async () => {
     }
 
     renderArticles(Object.keys(articles)[0]);
+
+    function codeAdditional() {
+        const codeBlocks = document.querySelectorAll('code');
+
+        codeBlocks.forEach((codeBlock, index) => {
+            // Create a wrapper div for the checkbox and code block
+            const wrapper = document.createElement('div');
+            wrapper.style.position = 'relative';
+            wrapper.style.display = 'inline-block';
+
+            // Create a checkbox
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.style.position = 'absolute';
+            checkbox.style.top = '-15px';
+            checkbox.style.left = '-15px';
+            checkbox.style.appearance = 'none';
+            checkbox.style.backgroundColor = '#333';
+            checkbox.style.borderRadius = '100%';
+            checkbox.style.width = '10px';
+            checkbox.style.height = '10px';
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    checkbox.style.backgroundColor = '#999';
+                    codeBlock.style.whiteSpace = 'pre-wrap';
+                } else {
+                    checkbox.style.backgroundColor = '#333';
+                    codeBlock.style.whiteSpace = '';
+                }
+            });
+
+            // Wrap the code block with the wrapper
+            codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+            wrapper.appendChild(checkbox);
+            wrapper.appendChild(codeBlock);
+        });
+    }
 })();
