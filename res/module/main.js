@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 import fetcher from "./fetcher.js";
 import dateutils from "./dateutils.js";
 
@@ -8,19 +8,9 @@ const main = (async () => {
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    const techNotes = await get(ref(database, 'technotes'));
-
-    const articles = !techNotes.val() ? {
-        '分類': [
-            {
-                title: '標題',
-                summary: '總結',
-                content: '內容',
-                image: 'https://www.duckode.com/img/duck/duck_192x_144p.png',
-                date: '1755448243429'
-            }
-        ]
-    } : techNotes.val();
+    onValue(ref(database, 'technotes'), async (snapshot) => {
+        UpdateCategoryList(snapshot.val());
+    });
 
     const categoryList = document.getElementById('categoryList');
     const articleContainer = document.getElementById('articleContainer');
@@ -30,14 +20,29 @@ const main = (async () => {
     const articleContent = articleView.querySelector('.article-content');
     const articleBackButton = articleContent.querySelector('.back-btn');
 
-    Object.keys(articles).forEach(category => {
-        const li = document.createElement('li');
-        li.textContent = category;
-        li.onclick = () => renderArticles(category);
-        categoryList.appendChild(li);
-    });
+    let lastCategoryIndex = 0;
 
-    function renderArticles(category) {
+    function UpdateCategoryList(articles) {
+        if (categoryList.children.length > 0) {
+            categoryList.innerHTML = '';
+        }
+        Object.keys(articles).forEach((category, index) => {
+            const li = document.createElement('li');
+            li.textContent = category;
+            li.onclick = () => {
+                lastCategoryIndex = index;
+                renderArticles(articles, category);
+            };
+            categoryList.appendChild(li);
+        });
+        if (!Object.keys(articles)[lastCategoryIndex]) {
+            renderArticles(articles, Object.keys(articles)[Object.keys(articles).length - 1]);
+        } else {
+            renderArticles(articles, Object.keys(articles)[lastCategoryIndex]);
+        }
+    }
+
+    function renderArticles(articles, category) {
         articleContainer.innerHTML = '';
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
@@ -92,8 +97,6 @@ const main = (async () => {
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
     }
-
-    renderArticles(Object.keys(articles)[0]);
 
     function codeAdditional() {
         const codeBlocks = document.querySelectorAll('code');
