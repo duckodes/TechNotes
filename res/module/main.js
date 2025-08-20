@@ -56,6 +56,7 @@ const main = (async () => {
 
             const p = document.createElement('p');
             p.textContent = article.summary;
+            p.innerHTML = p.innerHTML.replace(/\n/g, "<br>");
 
             const date = document.createElement('p');
             date.style.fontSize = '0.8rem';
@@ -83,7 +84,7 @@ const main = (async () => {
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
-            <p>${article.content}</p>
+            <p>${article.content.replace(/\n/g, "<br>")}</p>
         `;
 
         articleContainer.style.display = 'none';
