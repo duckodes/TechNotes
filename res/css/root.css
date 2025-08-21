@@ -30,6 +30,8 @@
 }
 
 pre {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     background-color: #1e1e1e;
     color: #ffffff;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
