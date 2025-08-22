@@ -1,14 +1,45 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 import fetcher from "./fetcher.js";
 import dateutils from "./dateutils.js";
 
 const main = (async () => {
+    function initProfile(url = '', name = '無使用者資料', title = '', employed = '', email = '', github = '') {
+        const profile = document.querySelector('.profile');
+        const profileImage = profile.querySelector('.avatar');
+        profileImage.src = url;
+        const profileName = profile.querySelector('h3');
+        profileName.textContent = name;
+        const profileDesc = profile.querySelectorAll('p');
+        profileDesc[0].textContent = title;
+        profileDesc[1].textContent = employed;
+        profileDesc[2].innerHTML = email;
+        profileDesc[3].innerHTML = github;
+    }
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    if (!urlSearchParams.has('user')) {
+        window.location.href = window.location.origin + window.location.pathname + '?user=duckode';
+    }
+
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
-    onValue(ref(database, 'technotes'), async (snapshot) => {
+    const dataKeySnapshot = await get(ref(database, `technotes/user/${urlSearchParams.get('user')}`));
+    const dataValue = dataKeySnapshot.val();
+    if (!dataValue) {
+        initProfile();
+        return;
+    } else {
+        initProfile('https://www.duckode.com/img/duck/duck_192x_144p.png',
+            'Duckode',
+            '軟體工程師',
+            '任職: Jsports-Technologies',
+            '<a href="mailto:bear90789078@gmail.com">bear90789078@gmail.com</a>',
+            '<a href="https://github.com/duckodes" target="_blank">GitHub</a>');
+    }
+    const dataKey = dataKeySnapshot.val().uid;
+    onValue(ref(database, `technotes/data/${dataKey}`), async (snapshot) => {
         UpdateCategoryList(snapshot.val());
     });
 
