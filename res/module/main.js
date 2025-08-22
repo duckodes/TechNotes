@@ -9,19 +9,7 @@ const main = (async () => {
     const database = getDatabase(app);
 
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const dataKeySnapshot = await get(ref(database, `technotes/user/${urlSearchParams.size === 0 ? 'duckode' : urlSearchParams.get('user')}`));
-    const dataValue = dataKeySnapshot.val();
-    if (!dataValue) {
-        initProfile();
-        return;
-    } else {
-        initProfile('https://www.duckode.com/img/duck/duck_192x_144p.png',
-            'Duckode',
-            '軟體工程師',
-            '任職: Jsports-Technologies',
-            '<a href="mailto:bear90789078@gmail.com">bear90789078@gmail.com</a>',
-            '<a href="https://github.com/duckodes" target="_blank">GitHub</a>');
-    }
+    const dataKey = await findParentNodeById(urlSearchParams.size === 0 ? 'duckode' : urlSearchParams.get('user'));
     function initProfile(url = '', name = '無使用者資料', title = '', employed = '', email = '', github = '') {
         const profile = document.querySelector('.profile');
         const profileImage = profile.querySelector('.avatar');
@@ -34,7 +22,43 @@ const main = (async () => {
         profileDesc[2].innerHTML = email;
         profileDesc[3].innerHTML = github;
     }
-    const dataKey = dataKeySnapshot.val().uid;
+    async function findParentNodeById(targetName) {
+        try {
+            const rootRef = ref(database, 'technotes/user');
+            const snapshot = await get(rootRef);
+
+            if (!snapshot.exists()) {
+                throw new Error('資料不存在');
+            }
+
+            const data = snapshot.val();
+
+            for (const [key, value] of Object.entries(data)) {
+                if (value.name === targetName) {
+                    return key;
+                }
+            }
+
+            return null;
+        } catch (error) {
+            console.error('查找失敗：', error.message);
+            return null;
+        }
+    }
+    onValue(ref(database, `technotes/user/${dataKey}`), async (snapshot) => {
+        const data = snapshot.val();
+        if (!dataKey) {
+            initProfile();
+            return;
+        } else {
+            initProfile(data.image,
+                data.name,
+                data.title,
+                data.employed,
+                `<a href="mailto:${data.email}">${data.email}</a>`,
+                `<a href="${data.github}" target="_blank">GitHub</a>`);
+        }
+    });
     onValue(ref(database, `technotes/data/${dataKey}`), async (snapshot) => {
         UpdateCategoryList(snapshot.val());
     });
