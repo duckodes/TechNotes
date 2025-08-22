@@ -9,7 +9,7 @@ const main = (async () => {
     const database = getDatabase(app);
 
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const dataKey = await findParentNodeById(urlSearchParams.size === 0 ? 'duckode' : urlSearchParams.get('user'));
+    const dataKey = await findParentNodeById(urlSearchParams.size === 0 ? (await get(ref(database, 'technotes/user/DPcmhV427VQNJ9ojiOTD2aYyuE83/name'))).val() : urlSearchParams.get('user'));
     function initProfile(url = '', name = '無使用者資料', title = '', employed = '', email = '', github = '') {
         const profile = document.querySelector('.profile');
         const profileImage = profile.querySelector('.avatar');
@@ -77,6 +77,7 @@ const main = (async () => {
         if (categoryList.children.length > 0) {
             categoryList.innerHTML = '';
         }
+        if (!articles) return;
         Object.keys(articles).forEach((category, index) => {
             const li = document.createElement('li');
             li.textContent = category;
