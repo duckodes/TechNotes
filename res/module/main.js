@@ -186,5 +186,22 @@ const main = (async () => {
             wrapper.appendChild(checkbox);
             wrapper.appendChild(codeBlock);
         });
+        const codeBlock = document.querySelectorAll('code');
+        codeBlock.forEach(element => {
+            addCodeNum(element);
+        });
+        function addCodeNum(element) {
+            const codeText = element.innerText;
+            const lines = codeText.split('\n');
+            let numberedCode = '';
+            for (var i = 0; i < lines.length; i++) {
+                numberedCode += `<div class="no-select codenum-atv" contenteditable="false" style="display: inline-block;color: #555;">${(i + 1).toString().padEnd(lines.length.toString().length, ' ')} </div>${lines[i]}`;
+
+                if (i < lines.length - 1) {
+                    numberedCode += '\n';
+                }
+            }
+            element.innerHTML = numberedCode;
+        }
     }
 })();
