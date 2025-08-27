@@ -1,0 +1,69 @@
+:root {
+    --bg: #fff4f9;
+    --card-bg: #ffe6f0;
+    --accent: #f3a8b5;
+    --text: #3e1c1c;
+    --border: #f7b8d2;
+    --highlight: #f9d5e5;
+    --shadow: rgba(255, 182, 199, 0.3);
+    --radius: 12px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--highlight);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+::-webkit-scrollbar-corner {
+    background-color: var(--bg);
+}
+
+::selection {
+    color: white;
+    background-color: var(--accent);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+pre {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.95em;
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: pre;
+    overflow-x: auto;
+    display: block;
+    contain: inline-size;
+}
+
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border: none;
+}
+
+pre code .no-select {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}

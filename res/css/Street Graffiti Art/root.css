@@ -1,0 +1,63 @@
+:root {
+    --bg: #161616;
+    --card-bg: #1d1d1d;
+    --accent: #f53d57;
+    --text: #f1f1f1;
+    --border: #333333;
+    --radius: 10px;
+    --highlight: #ffcd00;
+    --muted: #888;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--highlight);
+}
+
+::-webkit-scrollbar-corner {
+    background-color: var(--bg);
+}
+
+::selection {
+    color: black;
+    background-color: var(--highlight);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+pre {
+    background-color: #222;
+    color: #e2e2e2;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid #444;
+    width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+    display: block;
+    contain: inline-size;
+}
+
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border: none;
+}
+
+pre code .no-select {
+    user-select: none;
+}

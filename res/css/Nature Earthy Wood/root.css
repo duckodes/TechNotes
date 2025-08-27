@@ -1,0 +1,52 @@
+:root {
+    --bg: #f9f5f1;
+    --card-bg: #fffdf9;
+    --accent: #7d8f69;
+    --text: #3e3e3e;
+    --border: #d9ccc1;
+    --radius: 12px;
+    --muted: #8b7e74;
+}
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #bfae9e;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #a89582;
+}
+::-webkit-scrollbar-corner {
+    background-color: var(--bg);
+}
+::selection {
+    color: white;
+    background-color: var(--accent);
+}
+* {
+    box-sizing: border-box;
+}
+pre {
+    background-color: #f1ede8;
+    color: #4a4a4a;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.95em;
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid #d8cfc4;
+    width: 100%;
+    overflow-x: auto;
+    white-space: pre;
+    display: block;
+    contain: inline-size;
+}
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border: none;
+}
+pre code .no-select {
+    user-select: none;
+}

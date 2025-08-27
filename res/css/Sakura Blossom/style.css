@@ -1,0 +1,226 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    text-align: center;
+    padding: 3rem 1rem;
+    font-size: 2.6rem;
+    color: var(--accent);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 3px solid var(--highlight);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.content {
+    flex: 1;
+    max-width: 1200px;
+    margin: auto;
+    padding: 2rem 1rem;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+}
+
+aside.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0px 4px 12px var(--shadow);
+}
+
+.profile {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0px 4px 8px var(--shadow);
+}
+
+.avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+}
+
+.profile h3 {
+    margin: 0.5rem 0;
+    color: var(--accent);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.profile p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.profile a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.profile a:hover {
+    text-decoration: underline;
+}
+
+.category-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0px 4px 8px var(--shadow);
+}
+
+.category-box h2 {
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+}
+
+.category-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.category-box li {
+    margin: 0.5rem 0;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius);
+    transition: background 0.3s ease;
+}
+
+.category-box li:hover {
+    background: var(--accent);
+    color: white;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 280px;
+    box-shadow: 0px 4px 8px var(--shadow);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 15px var(--shadow);
+}
+
+.card h3 {
+    color: var(--accent);
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.card p {
+    color: var(--text);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.article-view {
+    display: none;
+    max-width: 800px;
+    margin: auto;
+}
+
+.article-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: 0px 6px 12px var(--shadow);
+}
+
+.article-content h2 {
+    color: var(--accent);
+    font-size: 1.8rem;
+    margin-top: 0;
+}
+
+.article-content p {
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #666;
+}
+
+.article-content a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.article-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 1rem 0;
+}
+
+.back-btn {
+    margin-top: 2rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.2rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+}
+
+.back-btn:hover {
+    background: #f77d72;
+}
+
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.9rem;
+    color: #999;
+    border-top: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+    .content {
+        grid-template-columns: 1fr;
+        padding: 2rem 1rem;
+    }
+
+    .container {
+        justify-content: center;
+    }
+}

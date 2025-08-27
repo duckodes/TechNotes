@@ -1,0 +1,228 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Orbitron', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0a0f1c, #11182b);
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    font-size: 2.5rem;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    text-shadow: var(--glow);
+}
+
+.content {
+    flex: 1;
+    max-width: 1400px;
+    margin: auto;
+    padding: 3rem 2rem;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2.5rem;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+aside.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.profile {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--glow);
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 0.75rem;
+    border: 2px solid var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+}
+
+.profile h3 {
+    margin: 0.5rem 0 0.2rem;
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.profile p {
+    margin: 0.2rem 0;
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+.profile a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.profile a:hover {
+    text-decoration: underline;
+    text-shadow: var(--glow);
+}
+
+.category-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    box-shadow: var(--shadow);
+}
+
+.category-box h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    color: var(--accent);
+    text-shadow: var(--glow);
+}
+
+.category-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.category-box li {
+    margin: 0.5rem 0;
+    cursor: pointer;
+    padding: 0.5rem 0.8rem;
+    border-radius: var(--radius);
+    transition: background 0.2s, transform 0.2s;
+}
+
+.category-box li:hover {
+    background: var(--accent);
+    color: black;
+    transform: translateX(5px);
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.2rem;
+    width: 300px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.card:hover {
+    box-shadow: 0 0 20px var(--accent);
+    transform: translateY(-5px);
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 1.2rem;
+    text-shadow: var(--glow);
+}
+
+.card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #b0c4de;
+}
+
+.article-view {
+    display: none;
+    max-width: 900px;
+    margin: auto;
+}
+
+.article-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+}
+
+.article-content h2 {
+    color: var(--accent);
+    margin-top: 0;
+    text-shadow: var(--glow);
+}
+
+.article-content p {
+    line-height: 1.7;
+    font-size: 1.05rem;
+    color: #ccddee;
+}
+
+.article-content a {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.article-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.back-btn {
+    margin-top: 2rem;
+    background: var(--accent);
+    color: black;
+    border: none;
+    padding: 0.75rem 1.2rem;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #00ffc3;
+}
+
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.85rem;
+    color: #aaa;
+    border-top: 1px solid var(--border);
+    background: #0c111f;
+}
+
+@media (max-width: 768px) {
+    .content {
+        grid-template-columns: 1fr;
+        padding: 2rem 1.2rem;
+    }
+
+    .container {
+        justify-content: center;
+    }
+}

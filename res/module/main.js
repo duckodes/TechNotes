@@ -177,9 +177,11 @@ const main = (async () => {
                 if (checkbox.checked) {
                     checkbox.style.backgroundColor = '#999';
                     codeBlock.style.whiteSpace = 'pre-wrap';
+                    codeBlock.style.wordBreak = 'break-all';
                 } else {
                     checkbox.style.backgroundColor = '#333';
                     codeBlock.style.whiteSpace = '';
+                    codeBlock.style.wordBreak = '';
                 }
             });
 
