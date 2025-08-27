@@ -1,7 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
 import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 import fetcher from "./fetcher.js";
-import dateutils from "./dateutils.js";
+import dateutils from "./date.utils.js";
+import themeutils from "./theme.utils.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -58,6 +59,7 @@ const main = (async () => {
                 `<a href="mailto:${data.email}">${data.email}</a>`,
                 `<a href="${data.github}" target="_blank">GitHub</a>`);
         }
+        data.theme && themeutils.set(data.theme);
     });
     onValue(ref(database, `technotes/data/${dataKey}`), async (snapshot) => {
         UpdateCategoryList(snapshot.val());

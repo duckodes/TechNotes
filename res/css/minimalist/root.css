@@ -1,0 +1,51 @@
+:root {
+    --bg: #fcfcfc;
+    --card-bg: #ffffff;
+    --accent: #8baaad;
+    --accent-hover: #6f8f91;
+
+    --text-main: #2e2e2e;
+    --text-subtle: #555555;
+    --text-muted: #999999;
+    --text-link: var(--accent);
+
+    --border: #e5e5e5;
+    --radius: 8px;
+
+    --font-sans: 'Noto Sans', 'Hiragino Sans', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text-main);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+::selection {
+    background: var(--accent);
+    color: white;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cccccc;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: var(--bg);
+}
