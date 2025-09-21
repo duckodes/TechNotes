@@ -11,7 +11,7 @@ const main = (async () => {
 
     const urlSearchParams = new URLSearchParams(window.location.search);
     const dataKey = await findParentNodeById(urlSearchParams.size === 0 ? (await get(ref(database, 'technotes/user/DPcmhV427VQNJ9ojiOTD2aYyuE83/name'))).val() : urlSearchParams.get('user'));
-    function initProfile(url = '', name = '無使用者資料', title = '', employed = '', email = '', github = '') {
+    function initProfile(url = '', name = `無使用者資料`, title = '', employed = '', email = '', github = '') {
         const profile = document.querySelector('.profile');
         const profileImage = profile.querySelector('.avatar');
         profileImage.src = url;
@@ -49,9 +49,10 @@ const main = (async () => {
     onValue(ref(database, `technotes/user/${dataKey}`), async (snapshot) => {
         const data = snapshot.val();
         if (!dataKey) {
-            initProfile();
+            initProfile('', `無${urlSearchParams.get('user')}使用者資料`);
             return;
         } else {
+            UpdateTopic(data.topic);
             initProfile(data.image,
                 data.name,
                 data.title,
@@ -64,6 +65,10 @@ const main = (async () => {
     onValue(ref(database, `technotes/data/${dataKey}`), async (snapshot) => {
         UpdateCategoryList(snapshot.val());
     });
+    const topic = document.querySelector('.layout>header');
+    async function UpdateTopic(text) {
+        topic.textContent = text;
+    }
 
     const categoryList = document.getElementById('categoryList');
     const articleContainer = document.getElementById('articleContainer');
