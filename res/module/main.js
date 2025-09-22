@@ -85,6 +85,8 @@ const main = (async () => {
     histroyTracker.addEventListener('click', () => {
         lastCategoryIndex = null;
         UpdateCategoryList(lastArticles);
+        articleView.style.display = 'none';
+        articleContainer.style.display = 'flex';
     });
 
     function UpdateCategoryList(articles) {
@@ -170,14 +172,7 @@ const main = (async () => {
 
         // 垂直線
         const line = document.createElement('div');
-        line.style.position = 'absolute';
-        line.style.top = '0';
-        line.style.left = '50%';
-        line.style.transform = 'translateX(-50%)';
-        line.style.width = '1px';
-        line.style.height = '100%';
-        line.style.backgroundImage = 'linear-gradient(to bottom, transparent, #ccc 20%, #ccc 80%, transparent)';
-        line.style.pointerEvents = 'none'; // 防止擋住點擊
+        line.className = 'histroy-tracker-line';
         articleContainer.appendChild(line);
 
         const allArticles = [];
@@ -192,11 +187,7 @@ const main = (async () => {
             .sort((a, b) => b.date - a.date)
             .forEach(article => {
                 const wrapper = document.createElement('div');
-                wrapper.style.position = 'relative';
-                wrapper.style.width = '100%';
-                wrapper.style.margin = '2rem 0';
-                wrapper.style.display = 'flex';
-                wrapper.style.cursor = 'pointer';
+                wrapper.className = 'histroy-tracker-wrapper';
 
                 // 判斷時間是否在中午以前
                 const dateObj = new Date(article.date);
@@ -206,29 +197,19 @@ const main = (async () => {
                 wrapper.style.justifyContent = isMorning ? 'flex-start' : 'flex-end';
 
                 const card = document.createElement('div');
-                card.style.width = '50%';
-                card.style.padding = '1rem';
-                // card.style.borderBottom = '1px solid #ccc';
-                card.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
-                card.style.position = 'relative';
+                card.className = 'histroy-tracker-card';
 
                 const bottomLine = document.createElement('div');
-                bottomLine.style.position = 'absolute';
-                bottomLine.style.bottom = '0';
-                bottomLine.style.left = '0';
-                bottomLine.style.width = '100%';
-                bottomLine.style.height = '1px';
+                bottomLine.className = 'histroy-tracker-bottom-line';
                 bottomLine.style.backgroundImage = isMorning ?
                     'linear-gradient(to left, #ccc, transparent)' :
                     'linear-gradient(to right, #ccc, transparent)';
                 card.appendChild(bottomLine);
 
                 const date = document.createElement('p');
+                date.className = 'histroy-tracker-date';
                 date.textContent = dateutils.ToDateTime(article.date);
                 date.style.textAlign = isMorning ? 'right' : 'left';
-                date.style.fontSize = '0.8rem';
-                date.style.color = '#888';
-                date.style.marginBottom = '0.5rem';
 
                 const h3 = document.createElement('h5');
                 h3.textContent = article.title;
