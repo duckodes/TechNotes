@@ -102,6 +102,13 @@ aside.sidebar {
     color: var(--highlight);
 }
 
+#histroyTracker {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--accent);
+    cursor: pointer;
+}
+
 .category-box {
     background: var(--card-bg);
     border: 2px solid var(--highlight);

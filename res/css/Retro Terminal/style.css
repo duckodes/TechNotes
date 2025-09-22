@@ -75,6 +75,14 @@ aside.sidebar {
   text-decoration: none;
 }
 
+#histroyTracker {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--accent);
+    cursor: pointer;
+}
+
 .category-box {
   background: var(--card-bg);
   border: 1px solid var(--border);

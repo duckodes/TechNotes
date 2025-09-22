@@ -65,6 +65,10 @@ const main = (async () => {
     onValue(ref(database, `technotes/data/${dataKey}`), async (snapshot) => {
         UpdateCategoryList(snapshot.val());
     });
+
+    let lastCategoryIndex = null;
+    let lastArticles = null;
+
     const topic = document.querySelector('.layout>header');
     async function UpdateTopic(text) {
         topic.textContent = text;
@@ -77,14 +81,18 @@ const main = (async () => {
     const articleBody = document.getElementById('articleBody');
     const articleContent = articleView.querySelector('.article-content');
     const articleBackButton = articleContent.querySelector('.back-btn');
-
-    let lastCategoryIndex = 0;
+    const histroyTracker = document.getElementById('histroyTracker');
+    histroyTracker.addEventListener('click', () => {
+        lastCategoryIndex = null;
+        UpdateCategoryList(lastArticles);
+    });
 
     function UpdateCategoryList(articles) {
         if (categoryList.children.length > 0) {
             categoryList.innerHTML = '';
         }
         if (!articles) return;
+        lastArticles = articles;
         Object.keys(articles).forEach((category, index) => {
             const li = document.createElement('li');
             li.textContent = category;
@@ -95,7 +103,8 @@ const main = (async () => {
             categoryList.appendChild(li);
         });
         if (!Object.keys(articles)[lastCategoryIndex]) {
-            renderArticles(articles, Object.keys(articles)[Object.keys(articles).length - 1]);
+            // renderArticles(articles, Object.keys(articles)[Object.keys(articles).length - 1]);
+            renderChronologicalOrder(articles);
         } else {
             renderArticles(articles, Object.keys(articles)[lastCategoryIndex]);
         }
@@ -150,6 +159,89 @@ const main = (async () => {
         articleView.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
         codeAdditional();
+    }
+    // 依時間排序
+    function renderChronologicalOrder(articles) {
+        articleContainer.innerHTML = '';
+        articleContainer.style.position = 'relative';
+        articleContainer.style.width = '100%';
+        articleContainer.style.padding = '2rem 0';
+        articleContainer.style.boxSizing = 'border-box';
+
+        // 垂直線
+        const line = document.createElement('div');
+        line.style.position = 'absolute';
+        line.style.top = '0';
+        line.style.left = '50%';
+        line.style.transform = 'translateX(-50%)';
+        line.style.width = '1px';
+        line.style.height = '100%';
+        line.style.backgroundImage = 'linear-gradient(to bottom, transparent, #ccc 20%, #ccc 80%, transparent)';
+        line.style.pointerEvents = 'none'; // 防止擋住點擊
+        articleContainer.appendChild(line);
+
+        const allArticles = [];
+
+        for (const [key, value] of Object.entries(articles)) {
+            if (Array.isArray(value)) {
+                allArticles.push(...value);
+            }
+        }
+
+        allArticles
+            .sort((a, b) => b.date - a.date)
+            .forEach(article => {
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.width = '100%';
+                wrapper.style.margin = '2rem 0';
+                wrapper.style.display = 'flex';
+                wrapper.style.cursor = 'pointer';
+
+                // 判斷時間是否在中午以前
+                const dateObj = new Date(article.date);
+                const hour = dateObj.getHours();
+                const isMorning = hour < 12;
+
+                wrapper.style.justifyContent = isMorning ? 'flex-start' : 'flex-end';
+
+                const card = document.createElement('div');
+                card.style.width = '50%';
+                card.style.padding = '1rem';
+                // card.style.borderBottom = '1px solid #ccc';
+                card.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+                card.style.position = 'relative';
+
+                const bottomLine = document.createElement('div');
+                bottomLine.style.position = 'absolute';
+                bottomLine.style.bottom = '0';
+                bottomLine.style.left = '0';
+                bottomLine.style.width = '100%';
+                bottomLine.style.height = '1px';
+                bottomLine.style.backgroundImage = isMorning ?
+                    'linear-gradient(to left, #ccc, transparent)' :
+                    'linear-gradient(to right, #ccc, transparent)';
+                card.appendChild(bottomLine);
+
+                const date = document.createElement('p');
+                date.textContent = dateutils.ToDateTime(article.date);
+                date.style.textAlign = isMorning ? 'right' : 'left';
+                date.style.fontSize = '0.8rem';
+                date.style.color = '#888';
+                date.style.marginBottom = '0.5rem';
+
+                const h3 = document.createElement('h5');
+                h3.textContent = article.title;
+                h3.style.margin = '0';
+                h3.style.textAlign = isMorning ? 'right' : 'left';
+
+                card.appendChild(date);
+                card.appendChild(h3);
+                card.onclick = () => showArticle(article);
+
+                wrapper.appendChild(card);
+                articleContainer.appendChild(wrapper);
+            });
     }
 
 
