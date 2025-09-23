@@ -3,6 +3,7 @@ import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebase
 import fetcher from "./fetcher.js";
 import dateutils from "./date.utils.js";
 import themeutils from "./theme.utils.js";
+import scrollUtils from "./scroll.utils.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -139,6 +140,8 @@ const main = (async () => {
 
             card.onclick = () => showArticle(article);
             articleContainer.appendChild(card);
+
+            scrollUtils.margin(articleContainer, -20);
         });
     }
 
@@ -159,7 +162,7 @@ const main = (async () => {
 
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        scrollUtils.margin(articleView, -20);
         codeAdditional();
     }
     // 依時間排序
@@ -222,6 +225,8 @@ const main = (async () => {
 
                 wrapper.appendChild(card);
                 articleContainer.appendChild(wrapper);
+
+                scrollUtils.margin(articleContainer, -20);
             });
     }
 
