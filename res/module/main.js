@@ -273,12 +273,9 @@ const main = (async () => {
             wrapper.appendChild(checkbox);
             wrapper.appendChild(codeBlock);
         });
-        const codeBlock = document.querySelectorAll('code');
-        codeBlock.forEach(element => {
-            addCodeNum(element);
-        });
+
         function addCodeNum(element) {
-            const codeText = element.innerText;
+            const codeText = element.innerHTML;
             const lines = codeText.split('\n');
             let numberedCode = '';
             for (var i = 0; i < lines.length; i++) {
@@ -290,5 +287,49 @@ const main = (async () => {
             }
             element.innerHTML = numberedCode;
         }
+
+        // Highlight
+        const keywords = ['this', 'true', 'false', 'const', 'var', 'public', 'private', 'await', 'float', 'int', 'bool', 'long', 'uint', 'string', 'char', 'double', 'void', 'static', 'new', 'class', 'as', 'default', 'null', 'using', 'namespace', 'virtual', 'override', 'typeof', 'sizeof', 'get', 'set', 'in', 'out', 'ref', 'params', 'base', 'enum', 'struct', 'event', 'interface', 'abstract', 'readonly', 'sealed', 'lock', 'async'];
+        const keywords2 = ['if', 'else', 'for', 'while', 'break', 'return', 'try', 'catch', 'finally', 'throw', 'switch', 'case', 'foreach', 'do', 'continue', 'yield'];
+        const keywords3 = ['Vector2', 'Vector3', 'Vector4', 'Mathf', 'Color'];
+        codeBlocks.forEach(codeBlock => {
+            const raw = codeBlock.innerText;
+            const highlighted = raw
+                // KeyWords
+                .replace(/\b(\w+)\b/g, (match) => {
+                    if (keywords.includes(match)) {
+                        return `<span style="color: #569cd6;font-weight:bold">${match}</span>`;
+                    }
+                    return match;
+                })
+                // Keywords2
+                .replace(/\b(\w+)\b/g, (match) => {
+                    if (keywords2.includes(match)) {
+                        return `<span style="color: #d8a0df;font-weight:bold">${match}</span>`;
+                    }
+                    return match;
+                })
+                // Keywords3
+                .replace(/\b(\w+)\b/g, (match) => {
+                    if (keywords3.includes(match)) {
+                        return `<span style="color: #86c691;font-weight:bold">${match}</span>`;
+                    }
+                    return match;
+                })
+                // 註解
+                .replace(/\/\/.*/g, match => `<span style="color:#57a64a;">${match}</span>`)
+                .replace(/\/\*[\s\S]*?\*\//g, (match) => {
+                    return `<span style="color:#57a64a;">${match}</span>`;
+                })
+                .replace(/\b\d+(\.\d+)?\b/g, match => {
+                    return `<span style="color:#b5cea8;">${match}</span>`;
+                })
+                .replace(/\b0x[0-9a-fA-F]+\b/g, match => {
+                    return `<span style="color:#b5cea8;">${match}</span>`;
+                });
+            codeBlock.innerHTML = highlighted;
+
+            addCodeNum(codeBlock);
+        });
     }
 })();
