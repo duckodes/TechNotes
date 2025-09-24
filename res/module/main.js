@@ -186,6 +186,8 @@ const main = (async () => {
             }
         }
 
+        let previousDate = null;
+        const now = new Date();
         allArticles
             .sort((a, b) => b.date - a.date)
             .forEach(article => {
@@ -197,6 +199,13 @@ const main = (async () => {
                 const hour = dateObj.getHours();
                 const isMorning = hour < 12;
 
+                // 判斷間距
+                const baseMargin = 5;
+                const referenceDate = previousDate || now;
+                const dayDiff = Math.floor(Math.abs(dateObj - referenceDate) / (1000 * 60 * 60 * 24));
+                dayDiff !== 0 && (wrapper.style.marginTop = `${baseMargin + dayDiff * baseMargin}px`);
+                previousDate = dateObj;
+
                 wrapper.style.justifyContent = isMorning ? 'flex-start' : 'flex-end';
 
                 const card = document.createElement('div');
@@ -205,8 +214,8 @@ const main = (async () => {
                 const bottomLine = document.createElement('div');
                 bottomLine.className = 'histroy-tracker-bottom-line';
                 bottomLine.style.backgroundImage = isMorning ?
-                    'linear-gradient(to left, #ccc, transparent)' :
-                    'linear-gradient(to right, #ccc, transparent)';
+                    'linear-gradient(to left, var(--accent), transparent)' :
+                    'linear-gradient(to right, var(--accent), transparent)';
                 card.appendChild(bottomLine);
 
                 const date = document.createElement('p');
