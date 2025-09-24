@@ -289,43 +289,65 @@ const main = (async () => {
         }
 
         // Highlight
-        const keywords = ['this', 'true', 'false', 'const', 'var', 'public', 'private', 'await', 'float', 'int', 'bool', 'long', 'uint', 'string', 'char', 'double', 'void', 'static', 'new', 'class', 'as', 'default', 'null', 'using', 'namespace', 'virtual', 'override', 'typeof', 'sizeof', 'get', 'set', 'in', 'out', 'ref', 'params', 'base', 'enum', 'struct', 'event', 'interface', 'abstract', 'readonly', 'sealed', 'lock', 'async'];
-        const keywords2 = ['if', 'else', 'for', 'while', 'break', 'return', 'try', 'catch', 'finally', 'throw', 'switch', 'case', 'foreach', 'do', 'continue', 'yield'];
-        const keywords3 = ['Vector2', 'Vector3', 'Vector4', 'Mathf', 'Color'];
+        const csKeywords = [
+            ['this', 'true', 'false', 'const', 'var', 'public', 'private', 'await', 'float', 'int', 'bool', 'long', 'uint', 'string', 'char', 'double', 'void', 'static', 'new', 'class', 'as', 'default', 'null', 'using', 'namespace', 'virtual', 'override', 'typeof', 'sizeof', 'get', 'set', 'in', 'out', 'ref', 'params', 'base', 'enum', 'struct', 'event', 'interface', 'abstract', 'readonly', 'sealed', 'lock', 'async'],
+            ['if', 'else', 'for', 'while', 'break', 'return', 'try', 'catch', 'finally', 'throw', 'switch', 'case', 'foreach', 'do', 'continue', 'yield'],
+            ['Vector2', 'Vector3', 'Vector4', 'Mathf', 'Color']
+        ];
+        const jsKeywords = [
+            ['this', 'true', 'false', 'const', 'let', 'var', 'function', 'class', 'new', 'typeof', 'instanceof', 'delete', 'void', 'undefined', 'null', 'async', 'await', 'static', 'import', 'extends', 'super', 'yield', 'get', 'set'],
+            ['if', 'else', 'for', 'while', 'do', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'export', 'default', 'return'],
+            ['window', 'document'],
+            ['Array', 'Object', 'Math', 'Date', 'JSON', 'RegExp', 'Promise', 'Map', 'Set', 'Symbol', 'console', 'window', 'document']
+        ];
+        const keywordStyles = {
+            'language-csharp': [
+                { keywords: csKeywords[0], style: 'color: #569cd6;font-weight:bold' },
+                { keywords: csKeywords[1], style: 'color: #d8a0df;font-weight:bold' },
+                { keywords: csKeywords[2], style: 'color: #86c691;font-weight:bold' }
+            ],
+            'language-javascript': [
+                { keywords: jsKeywords[0], style: 'color: #439CCB;font-weight:bold' },
+                { keywords: jsKeywords[1], style: 'color: #C586C0;font-weight:bold' },
+                { keywords: jsKeywords[2], style: 'color: #9CDCFE;font-weight:bold' },
+                { keywords: jsKeywords[3], style: 'color: #4EC9B0;font-weight:bold' }
+            ]
+        };
+
         codeBlocks.forEach(codeBlock => {
+            const language = codeBlock.className;
+            const styles = keywordStyles[language] || keywordStyles['language-csharp'];
+
             const raw = codeBlock.innerText;
             const highlighted = raw
-                // KeyWords
-                .replace(/\b(\w+)\b/g, (match) => {
-                    if (keywords.includes(match)) {
-                        return `<span style="color: #569cd6;font-weight:bold">${match}</span>`;
-                    }
-                    return match;
-                })
-                // Keywords2
-                .replace(/\b(\w+)\b/g, (match) => {
-                    if (keywords2.includes(match)) {
-                        return `<span style="color: #d8a0df;font-weight:bold">${match}</span>`;
-                    }
-                    return match;
-                })
-                // Keywords3
-                .replace(/\b(\w+)\b/g, (match) => {
-                    if (keywords3.includes(match)) {
-                        return `<span style="color: #86c691;font-weight:bold">${match}</span>`;
-                    }
-                    return match;
-                })
+                // 字串高亮
+                .replace(/`(?:\\[\s\S]|[^\\`])*`/g, match => `<span style="color:#ce9178;">${match}</span>`)
+                .replace(/"(?:\\.|[^"\\])*"/g, match => `<span style="color:#ce9178;">${match}</span>`)
+                .replace(/'(?:\\.|[^'\\])*'/g, match => `<span style="color:#ce9178;">${match}</span>`)
                 // 註解
-                .replace(/\/\/.*/g, match => `<span style="color:#57a64a;">${match}</span>`)
+                .replace(/\/\/.*/g, match => `<span style="color: #57a64a;">${match}</span>`)
                 .replace(/\/\*[\s\S]*?\*\//g, (match) => {
-                    return `<span style="color:#57a64a;">${match}</span>`;
+                    return `<span style="color: #57a64a;">${match}</span>`;
                 })
                 .replace(/\b\d+(\.\d+)?\b/g, match => {
-                    return `<span style="color:#b5cea8;">${match}</span>`;
+                    return `<span style="color: #b5cea8;">${match}</span>`;
                 })
+                // 數字
                 .replace(/\b0x[0-9a-fA-F]+\b/g, match => {
-                    return `<span style="color:#b5cea8;">${match}</span>`;
+                    return `<span style="color: #b5cea8;">${match}</span>`;
+                })
+                // 類別.方法
+                .replace(/\.([a-zA-Z]+)/g, (match, p1) => {
+                    return `.<span style="color: #F0F0AA;">${p1}</span>`;
+                })
+                // KeyWords
+                .replace(/\b(\w+)\b/g, (match) => {
+                    for (const { keywords, style } of styles) {
+                        if (keywords.includes(match)) {
+                            return `<span style="${style}">${match}</span>`;
+                        }
+                    }
+                    return match;
                 });
             codeBlock.innerHTML = highlighted;
 
