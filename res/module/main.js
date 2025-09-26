@@ -187,6 +187,7 @@ const main = (async () => {
         }
 
         let previousDate = null;
+        let allMargin = 0;
         const now = new Date();
         allArticles
             .sort((a, b) => b.date - a.date)
@@ -205,6 +206,7 @@ const main = (async () => {
                 const dayDiff = Math.floor(Math.abs(dateObj - referenceDate) / (1000 * 60 * 60 * 24));
                 dayDiff !== 0 && (wrapper.style.marginTop = `${baseMargin + dayDiff * baseMargin}px`);
                 previousDate = dateObj;
+                allMargin += baseMargin + dayDiff * baseMargin;
 
                 wrapper.style.justifyContent = isMorning ? 'flex-start' : 'flex-end';
 
@@ -237,6 +239,8 @@ const main = (async () => {
 
                 scrollUtils.margin(articleContainer, -20);
             });
+        const linearHeight = (articleContainer.offsetHeight - allMargin ** 0.9) / allMargin;
+        line.style.backgroundImage = `linear-gradient(to bottom, transparent, var(--accent) ${linearHeight}%, var(--accent) ${100 - linearHeight}%, transparent)`;
     }
 
 
@@ -311,7 +315,7 @@ const main = (async () => {
         ];
         const keywordStyles = {
             'language-csharp': [
-                { keywords: csKeywords[0], style: 'color: #569cd6;font-weight:bold' },
+                { keywords: csKeywords[0], style: 'color: #569cd6;font-weight:bold;' },
                 { keywords: csKeywords[1], style: 'color: #d8a0df;font-weight:bold' },
                 { keywords: csKeywords[2], style: 'color: #86c691;font-weight:bold' }
             ],
@@ -347,7 +351,7 @@ const main = (async () => {
                 })
                 // 類別.方法
                 .replace(/\.([a-zA-Z]+)/g, (match, p1) => {
-                    return `.<span style="color: #F0F0AA;">${p1}</span>`;
+                    return `.<span style="color: #F0F0AA;font-weight:bold;">${p1}</span>`;
                 })
                 // KeyWords
                 .replace(/\b(\w+)\b/g, (match) => {
