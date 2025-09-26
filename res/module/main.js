@@ -218,20 +218,20 @@ const main = (async () => {
                 bottomLine.style.backgroundImage = isMorning ?
                     'linear-gradient(to left, var(--accent), transparent)' :
                     'linear-gradient(to right, var(--accent), transparent)';
-                card.appendChild(bottomLine);
 
                 const date = document.createElement('p');
                 date.className = 'histroy-tracker-date';
                 date.textContent = dateutils.ToDateTime(article.date);
                 date.style.textAlign = isMorning ? 'right' : 'left';
 
-                const h3 = document.createElement('h5');
-                h3.textContent = article.title;
-                h3.style.margin = '0';
-                h3.style.textAlign = isMorning ? 'right' : 'left';
+                const h5 = document.createElement('h5');
+                h5.textContent = article.title;
+                h5.style.marginTop = '10px';
+                h5.style.textAlign = isMorning ? 'right' : 'left';
 
                 card.appendChild(date);
-                card.appendChild(h3);
+                card.appendChild(bottomLine);
+                card.appendChild(h5);
                 card.onclick = () => showArticle(article);
 
                 wrapper.appendChild(card);
