@@ -107,6 +107,17 @@ const main = (async () => {
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         renderArticles((await get(ref(database, `technotes/data/${dataKey}`))).val(), urlSearchParams.get('category'))
+    } else if (urlSearchParams.get('profile') === 'true') {
+        layout.style.display = 'none';
+        const profile = document.querySelector('.sidebar');
+        profile.style.height = '100%';
+        document.body.appendChild(profile);
+    } else if (urlSearchParams.get('timeline') === 'true') {
+        layout.style.display = 'none';
+        document.body.appendChild(articleContainer);
+        document.body.appendChild(articleView);
+        articleView.style.padding = '1rem';
+        renderChronologicalOrder((await get(ref(database, `technotes/data/${dataKey}`))).val());
     }
 
     function UpdateCategoryList(articles) {
