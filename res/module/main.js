@@ -96,7 +96,7 @@ const main = (async () => {
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
         showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
-    } else if (!urlSearchParams.get('categoryID')) {
+    } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
         document.querySelector('.layout').style.display = 'none';
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
