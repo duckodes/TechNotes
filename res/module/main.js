@@ -303,7 +303,7 @@ const main = (async () => {
 
         // Highlight
         const csKeywords = [
-            ['this', 'true', 'false', 'const', 'var', 'public', 'private', 'await', 'float', 'int', 'bool', 'long', 'uint', 'string', 'char', 'double', 'void', 'static', 'new', 'class', 'as', 'default', 'null', 'using', 'namespace', 'virtual', 'override', 'typeof', 'sizeof', 'get', 'set', 'in', 'out', 'ref', 'params', 'base', 'enum', 'struct', 'event', 'interface', 'abstract', 'readonly', 'sealed', 'lock', 'async'],
+            ['this', 'true', 'false', 'const', 'var', 'public', 'private', 'await', 'float', 'int', 'bool', 'long', 'uint', 'ulong', 'string', 'char', 'double', 'void', 'static', 'new', 'class', 'as', 'default', 'null', 'using', 'namespace', 'virtual', 'override', 'typeof', 'sizeof', 'get', 'set', 'in', 'out', 'ref', 'params', 'base', 'enum', 'struct', 'event', 'interface', 'abstract', 'readonly', 'sealed', 'lock', 'async'],
             ['if', 'else', 'for', 'while', 'break', 'return', 'try', 'catch', 'finally', 'throw', 'switch', 'case', 'foreach', 'do', 'continue', 'yield'],
             ['Vector2', 'Vector3', 'Vector4', 'Mathf', 'Color']
         ];
