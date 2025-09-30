@@ -75,6 +75,7 @@ const main = (async () => {
         topic.textContent = text;
     }
 
+    const layout = document.querySelector('.layout');
     const categoryList = document.getElementById('categoryList');
     const articleContainer = document.getElementById('articleContainer');
     const articleView = document.getElementById('articleView');
@@ -91,13 +92,17 @@ const main = (async () => {
     });
 
     if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
-        document.querySelector('.layout').style.display = 'none';
+        layout.style.display = 'none';
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
         showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
+        window.parent.postMessage({
+            id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
+            height: articleView.clientHeight
+        }, '*');
     } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
-        document.querySelector('.layout').style.display = 'none';
+        layout.style.display = 'none';
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
