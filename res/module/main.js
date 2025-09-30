@@ -103,9 +103,9 @@ const main = (async () => {
         }, '*');
     } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
         layout.style.display = 'none';
+        document.body.appendChild(articleContainer);
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
-        articleBackButton.style.display = 'none';
         renderArticles((await get(ref(database, `technotes/data/${dataKey}`))).val(), urlSearchParams.get('category'))
     }
 
