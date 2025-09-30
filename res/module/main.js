@@ -90,6 +90,12 @@ const main = (async () => {
         articleContainer.style.display = 'flex';
     });
 
+    if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
+        showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
+    } else if (!urlSearchParams.get('categoryID')) {
+        renderArticles((await get(ref(database, `technotes/data/${dataKey}`))).val(), urlSearchParams.get('category'))
+    }
+
     function UpdateCategoryList(articles) {
         if (categoryList.children.length > 0) {
             categoryList.innerHTML = '';
