@@ -498,7 +498,6 @@ const main = (async () => {
             } else {
                 matchedArticles.forEach(article => {
                     const disableItem = document.createElement('div');
-                    disableItem.style.opacity = '0.5';
                     disableItem.style.borderTopLeftRadius = '10px';
                     disableItem.style.borderLeft = '6px solid var(--accent)';
                     disableItem.innerHTML = `<strong style="color: var(--accent);">&thinsp;${article.category}</strong>`;
@@ -506,7 +505,6 @@ const main = (async () => {
                     item.style.cursor = 'pointer';
                     item.style.wordBreak = 'break-word';
                     item.style.borderLeft = '6px solid var(--accent)';
-                    item.style.opacity = '0.5';
                     item.style.padding = '6px';
                     item.style.marginBottom = '20px';
                     item.style.backgroundColor = 'var(--bg)';
