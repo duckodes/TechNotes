@@ -5,6 +5,10 @@ body {
     height: 100%;
     font-family: 'Segoe UI', sans-serif;
     background: var(--bg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     color: var(--text);
 }
 

@@ -244,7 +244,7 @@ pre {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
     background-color: #f3f3f3;
-    color: var(--text-main);
+    color: var(--text);
     font-family: var(--font-mono);
     font-size: 0.9em;
     padding: 1rem;
