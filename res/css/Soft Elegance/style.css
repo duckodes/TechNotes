@@ -25,6 +25,38 @@ header {
     border-bottom: 3px solid var(--highlight);
 }
 
+.search-input-container {
+    width: 98%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    z-index: 999;
+    opacity: 0.3;
+}
+
+.search-input {
+    width: 80px;
+    height: 30px;
+    max-width: 200px;
+    padding: 8px;
+    margin: 10px 0 10px 5px;
+    background-color: var(--bg);
+    color: var(--text);
+    outline: none;
+    border: 1px solid var(--accent);
+    border-right: none;
+    transition: width 1s ease;
+}
+
+.search-close-btn {
+    color: var(--accent);
+    font-size: 18px;
+    border: 1px solid var(--accent);
+    border-left: none;
+    cursor: pointer;
+    height: 30px;
+}
+
 .content {
     flex: 1;
     max-width: 1200px;
@@ -84,6 +116,20 @@ aside.sidebar {
 
 .profile a:hover {
     text-decoration: underline;
+}
+
+.hr {
+    height: 1px;
+    background: var(--border);
+    margin: 1rem 0;
+}
+
+#edit {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--accent);
+    cursor: pointer;
 }
 
 #histroyTracker {

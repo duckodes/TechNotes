@@ -4,8 +4,6 @@ import fetcher from "./fetcher.js";
 import dateutils from "./date.utils.js";
 import themeutils from "./theme.utils.js";
 import scrollUtils from "./scroll.utils.js";
-import timer from "./timer.js";
-import remove from "./remove.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -86,6 +84,10 @@ const main = (async () => {
     const articleBody = document.getElementById('articleBody');
     const articleContent = articleView.querySelector('.article-content');
     const articleBackButton = articleContent.querySelector('.back-btn');
+    const edit = document.getElementById('edit');
+    edit.addEventListener('click', () => {
+        window.open('https://notesedit.duckode.com/');
+    });
     const histroyTracker = document.getElementById('histroyTracker');
     histroyTracker.addEventListener('click', () => {
         lastCategoryIndex = null;
@@ -403,65 +405,71 @@ const main = (async () => {
 
     function renderSearchBox(parent, articlesData) {
         if (!parent) {
-            console.error("指定的 parent 元素不存在");
+            console.error('指定的 parent 元素不存在');
             return;
         }
 
-        const inputContainer = document.createElement("div");
-        inputContainer.style.width = "100%";
-        inputContainer.style.display = "flex";
-        inputContainer.style.justifyContent = "end";
-        inputContainer.style.alignItems = "center";
+        const inputContainer = document.createElement('div');
+        inputContainer.className = 'search-input-container';
         inputContainer.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20px" height="20px" fill="var(--accent)" viewBox="0 0 119.828 122.88" enable-background="new 0 0 119.828 122.88" xml:space="preserve"><g><path d="M48.319,0C61.662,0,73.74,5.408,82.484,14.152c8.744,8.744,14.152,20.823,14.152,34.166 c0,12.809-4.984,24.451-13.117,33.098c0.148,0.109,0.291,0.23,0.426,0.364l34.785,34.737c1.457,1.449,1.465,3.807,0.014,5.265 c-1.449,1.458-3.807,1.464-5.264,0.015L78.695,87.06c-0.221-0.22-0.408-0.46-0.563-0.715c-8.213,6.447-18.564,10.292-29.814,10.292 c-13.343,0-25.423-5.408-34.167-14.152C5.408,73.741,0,61.661,0,48.318s5.408-25.422,14.152-34.166C22.896,5.409,34.976,0,48.319,0 L48.319,0z M77.082,19.555c-7.361-7.361-17.53-11.914-28.763-11.914c-11.233,0-21.403,4.553-28.764,11.914 C12.194,26.916,7.641,37.085,7.641,48.318c0,11.233,4.553,21.403,11.914,28.764c7.36,7.361,17.53,11.914,28.764,11.914 c11.233,0,21.402-4.553,28.763-11.914c7.361-7.36,11.914-17.53,11.914-28.764C88.996,37.085,84.443,26.916,77.082,19.555 L77.082,19.555z"/></g></svg>';
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "輸入關鍵字搜尋文章...";
-        input.style.width = "80px";
-        input.style.height = "30px";
-        input.style.maxWidth = "200px";
-        input.style.padding = "8px";
-        input.style.margin = "10px";
-        input.style.backgroundColor = "var(--bg)";
-        input.style.color = "var(--text)";
-        input.style.outline = "none";
-        input.style.border = "1px solid var(--accent)";
-        input.style.transition = "width 1s ease";
+        
+        const input = document.createElement('input');
+        input.className = 'search-input';
+        input.type = 'text';
+        input.placeholder = '輸入關鍵字搜尋文章...';
         inputContainer.appendChild(input);
 
-        const resultContainer = document.createElement("div");
-        resultContainer.style.padding = '10px';
-        input.addEventListener("focus", () => {
-            input.style.width = "100%";
-            resultContainer.style.display = "block";
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'search-close-btn';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.addEventListener('click', () => {
+            inputContainer.style.position = '';
+            inputContainer.style.top = '';
+            input.style.width = '';
+            input.value = '';
             Search();
         });
-        input.addEventListener("blur", async () => {
-            input.style.width = "80px";
-            await timer.delay(100);
-            resultContainer.style.display = "none";
+        inputContainer.appendChild(closeBtn);
+
+        const resultContainer = document.createElement('div');
+        resultContainer.style.padding = '10px';
+        input.addEventListener('focus', () => {
+            inputContainer.style.opacity = '1';
+            inputContainer.style.position = 'sticky';
+            inputContainer.style.top = '20px';
+            input.style.width = '100%';
+            Search();
+        });
+        input.addEventListener('blur', async () => {
+            inputContainer.style.opacity = '';
+            if (input.value.trim() === '') {
+                inputContainer.style.position = '';
+                inputContainer.style.top = '';
+                input.style.width = '';
+            }
         });
 
         // 高亮函式
         function highlight(text, keyword) {
             const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // 避免正則錯誤
-            const regex = new RegExp(`(${escapedKeyword})`, "gi");
+            const regex = new RegExp(`(${escapedKeyword})`, 'gi');
             return text.replace(regex, `<mark>$1</mark>`);
         }
         function removeMarkTags(text) {
-            return text.replace(/<\/?mark>/gi, "");
+            return text.replace(/<\/?mark>/gi, '');
         }
 
-        input.addEventListener("input", Search);
+        input.addEventListener('input', Search);
         function Search() {
             function stripHTML(html) {
-                const temp = document.createElement("div");
+                const temp = document.createElement('div');
                 temp.innerHTML = html;
-                return temp.textContent || temp.innerText || "";
+                return temp.textContent || temp.innerText || '';
             }
             const keyword = input.value.trim().toLowerCase();
-            resultContainer.innerHTML = "";
+            resultContainer.innerHTML = '';
 
-            if (keyword === "") return;
+            if (keyword === '') return;
 
             const matchedArticles = [];
 
@@ -486,20 +494,23 @@ const main = (async () => {
             }
 
             if (matchedArticles.length === 0) {
-                resultContainer.innerHTML = '<p style="width:100%;text-align:center;">找不到相關文章。</p>';
+                resultContainer.innerHTML = '<p style="width:100%;text-align:center;color: var(--text);opacity:0.5;">找不到相關文章</p>';
             } else {
                 matchedArticles.forEach(article => {
-                    const disableItem = document.createElement("div");
-                    disableItem.style.borderTopLeftRadius = "10px";
-                    disableItem.style.borderLeft = "6px solid var(--accent)";
+                    const disableItem = document.createElement('div');
+                    disableItem.style.opacity = '0.5';
+                    disableItem.style.borderTopLeftRadius = '10px';
+                    disableItem.style.borderLeft = '6px solid var(--accent)';
                     disableItem.innerHTML = `<strong style="color: var(--accent);">&thinsp;${article.category}</strong>`;
-                    const item = document.createElement("div");
-                    item.style.cursor = "pointer";
-                    item.style.borderLeft = "6px solid var(--accent)";
-                    item.style.padding = "6px";
-                    item.style.marginBottom = "20px";
-                    item.style.backgroundColor = "var(--bg)";
-                    item.style.borderBottomLeftRadius = "10px";
+                    const item = document.createElement('div');
+                    item.style.cursor = 'pointer';
+                    item.style.wordBreak = 'break-word';
+                    item.style.borderLeft = '6px solid var(--accent)';
+                    item.style.opacity = '0.5';
+                    item.style.padding = '6px';
+                    item.style.marginBottom = '20px';
+                    item.style.backgroundColor = 'var(--bg)';
+                    item.style.borderBottomLeftRadius = '10px';
                     item.innerHTML = `
                         <h2 id="articleTitle">
                             ${article.title}
@@ -511,13 +522,13 @@ const main = (async () => {
                             ${article.content}
                         </span>
                         `;
-                    item.addEventListener("mouseenter", () => {
-                        item.style.boxShadow = "0 8px 12px -4px var(--accent)";
-                        item.style.borderBottom = "1px solid var(--accent)";
+                    item.addEventListener('mouseenter', () => {
+                        item.style.boxShadow = '0 8px 12px -4px var(--accent)';
+                        item.style.borderBottom = '1px solid var(--accent)';
                     });
-                    item.addEventListener("mouseleave", () => {
-                        item.style.boxShadow = "var(--bg)";
-                        item.style.borderBottom = "none";
+                    item.addEventListener('mouseleave', () => {
+                        item.style.boxShadow = 'var(--bg)';
+                        item.style.borderBottom = 'none';
                     });
                     item.onclick = async () => {
                         const articleNoneHighlight = article;
@@ -525,14 +536,14 @@ const main = (async () => {
                         articleNoneHighlight.summary = removeMarkTags(articleNoneHighlight.summary);
                         articleNoneHighlight.title = removeMarkTags(articleNoneHighlight.title);
                         showArticle(articleNoneHighlight);
-                        resultContainer.style.display = "none";
-                        remove.child(resultContainer);
+                        resultContainer.innerHTML = '';
                         scrollUtils.margin(articleView, -20);
                     }
                     resultContainer.appendChild(disableItem);
                     resultContainer.appendChild(item);
                 });
             }
+            scrollUtils.margin(resultContainer.firstChild, -100);
         }
 
         parent.insertBefore(resultContainer, parent.firstChild.nextSibling.nextSibling);
