@@ -507,6 +507,7 @@ const main = (async () => {
                 matchedUsers.forEach(user => {
                     const hrItem = document.createElement('div');
                     hrItem.className = 'hr';
+                    hrItem.style.margin = '5px 0';
                     const topicItem = document.createElement('div');
                     topicItem.style.borderTopLeftRadius = '10px';
                     topicItem.style.borderLeft = '6px solid var(--border)';
@@ -516,17 +517,20 @@ const main = (async () => {
                     item.style.wordBreak = 'break-word';
                     item.style.borderLeft = '6px solid var(--border)';
                     item.style.padding = '6px';
-                    item.style.marginBottom = '20px';
                     item.style.backgroundColor = 'var(--bg)';
                     item.style.borderBottomLeftRadius = '10px';
                     item.innerHTML = `<h3 id="articleTitle">${user.name}</h3>`;
                     item.addEventListener('mouseenter', () => {
                         item.style.boxShadow = '0 8px 12px -4px var(--border)';
                         item.style.borderBottom = '1px solid var(--border)';
+                        topicItem.style.backgroundColor = 'var(--border)';
+                        item.style.backgroundColor = 'var(--border)';
                     });
                     item.addEventListener('mouseleave', () => {
                         item.style.boxShadow = 'var(--bg)';
                         item.style.borderBottom = 'none';
+                        topicItem.style.backgroundColor = '';
+                        item.style.backgroundColor = 'var(--bg)';
                     });
                     item.onclick = async () => {
                         window.location.href = `/?user=${stripHTML(user.name)}`;
@@ -538,6 +542,7 @@ const main = (async () => {
                 matchedArticles.forEach(article => {
                     const hrItem = document.createElement('div');
                     hrItem.className = 'hr';
+                    hrItem.style.margin = '5px 0';
                     const topicItem = document.createElement('div');
                     topicItem.style.borderTopLeftRadius = '10px';
                     topicItem.style.borderTopRightRadius = '10px';
@@ -550,7 +555,6 @@ const main = (async () => {
                     item.style.wordBreak = 'break-word';
                     item.style.borderLeft = '6px solid var(--accent)';
                     item.style.padding = '6px';
-                    item.style.marginBottom = '20px';
                     item.style.backgroundColor = 'var(--bg)';
                     item.style.borderBottomLeftRadius = '10px';
                     item.style.borderBottomRightRadius = '10px';
@@ -566,13 +570,11 @@ const main = (async () => {
                         </span>
                         `;
                     item.addEventListener('mouseenter', () => {
-                        // item.style.boxShadow = '0 8px 12px -4px var(--accent)';
-                        // item.style.borderBottom = '1px solid var(--accent)';
+                        topicItem.style.backgroundColor = 'var(--border)';
                         item.style.backgroundColor = 'var(--border)';
                     });
                     item.addEventListener('mouseleave', () => {
-                        item.style.boxShadow = 'var(--bg)';
-                        item.style.borderBottom = 'none';
+                        topicItem.style.backgroundColor = '';
                         item.style.backgroundColor = 'var(--bg)';
                     });
                     item.onclick = async () => {
