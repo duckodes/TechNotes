@@ -53,6 +53,7 @@ header {
     border-left: none;
     cursor: pointer;
     height: 30px;
+    padding-right: 5px;
 }
 
 .content {
