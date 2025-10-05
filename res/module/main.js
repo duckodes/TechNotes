@@ -404,6 +404,7 @@ const main = (async () => {
     }
 
     function renderSearchBox(parent, articlesData, allUsers) {
+        document.querySelector('.search-input-container')?.remove();
         if (!parent) {
             console.error('指定的 parent 元素不存在');
             return;
