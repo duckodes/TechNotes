@@ -104,7 +104,7 @@ const main = (async () => {
         showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
         window.parent.postMessage({
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
-            height: articleView.scrollHeight
+            height: articleView.offsetHeight
         }, '*');
     } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
         layout.style.display = 'none';
