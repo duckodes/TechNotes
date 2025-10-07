@@ -101,10 +101,10 @@ const main = (async () => {
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
-        showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
+        await showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
         window.parent.postMessage({
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
-            height: articleView.offsetHeight
+            height: articleView.scrollHeight
         }, '*');
     } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
         layout.style.display = 'none';
@@ -180,12 +180,25 @@ const main = (async () => {
         });
     }
 
-    function showArticle(article) {
+    async function loadImages(url) {
+        const loadPromises = url.map(src => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = src;
+            });
+        });
+
+        return Promise.all(loadPromises);
+    }
+    async function showArticle(article) {
         articleTitle.innerHTML = article.title;
 
+        const images = await loadImages(article.images);
         const imageHTML = article.images?.length
-            ? `<div class="article-images">${article.images.map(src =>
-                `<img src="${src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
+            ? `<div class="article-images">${images.map(img =>
+                `<img src="${img.src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
             ).join('')}</div>`
             : '';
 
