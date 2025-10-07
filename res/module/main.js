@@ -101,7 +101,7 @@ const main = (async () => {
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
-        await showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
+        await waitShowArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
         window.parent.postMessage({
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
             height: articleView.scrollHeight
@@ -181,6 +181,7 @@ const main = (async () => {
     }
 
     async function loadImages(url) {
+        if (!url) return null;
         const loadPromises = url.map(src => {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -192,13 +193,33 @@ const main = (async () => {
 
         return Promise.all(loadPromises);
     }
-    async function showArticle(article) {
+    async function waitShowArticle(article) {
         articleTitle.innerHTML = article.title;
 
         const images = await loadImages(article.images);
         const imageHTML = article.images?.length
             ? `<div class="article-images">${images.map(img =>
                 `<img src="${img.src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
+            ).join('')}</div>`
+            : '';
+
+        articleBody.innerHTML = `
+            <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
+            ${imageHTML}
+            <p>${article.content.replace(/\n/g, "<br>")}</p>
+        `;
+
+        articleContainer.style.display = 'none';
+        articleView.style.display = 'block';
+        scrollUtils.margin(articleView, -20);
+        codeAdditional();
+    }
+    function showArticle(article) {
+        articleTitle.innerHTML = article.title;
+
+        const imageHTML = article.images?.length
+            ? `<div class="article-images">${article.images.map(src =>
+                `<img src="${src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
             ).join('')}</div>`
             : '';
 
