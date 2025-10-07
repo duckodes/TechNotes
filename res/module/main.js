@@ -439,6 +439,7 @@ const main = (async () => {
 
     function renderSearchBox(parent, articlesData, allUsers) {
         document.querySelector('.search-input-container')?.remove();
+        document.querySelector('.search-result-container')?.remove();
         if (!parent) {
             console.error('指定的 parent 元素不存在');
             return;
@@ -467,6 +468,7 @@ const main = (async () => {
         inputContainer.appendChild(closeBtn);
 
         const resultContainer = document.createElement('div');
+        resultContainer.className = 'search-result-container';
         resultContainer.style.padding = '10px';
         input.addEventListener('focus', () => {
             inputContainer.style.opacity = '1';
