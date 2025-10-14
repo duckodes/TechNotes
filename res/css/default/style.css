@@ -170,6 +170,19 @@ aside.sidebar {
     justify-content: center;
 }
 
+.histroy-tracker-yearly-division {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to right, var(--bg) 20%, transparent 50%);
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    z-index: 1;
+}
+
 .histroy-tracker-line {
     position: absolute;
     top: 0;

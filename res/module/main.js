@@ -4,6 +4,7 @@ import fetcher from "./fetcher.js";
 import dateutils from "./date.utils.js";
 import themeutils from "./theme.utils.js";
 import scrollUtils from "./scroll.utils.js";
+import footer from "./footer.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -258,9 +259,19 @@ const main = (async () => {
         let previousDate = null;
         let allMargin = 0;
         const now = new Date();
+        const insertedYears = new Set();
         allArticles
             .sort((a, b) => b.date - a.date)
             .forEach(article => {
+                const year = new Date(article.date).getFullYear();
+                if (!insertedYears.has(year)) {
+                    const yearlyDivision = document.createElement('div');
+                    yearlyDivision.className = 'histroy-tracker-yearly-division';
+                    yearlyDivision.textContent = `${year}`;
+                    articleContainer.appendChild(yearlyDivision);
+                    insertedYears.add(year);
+                }
+
                 const wrapper = document.createElement('div');
                 wrapper.className = 'histroy-tracker-wrapper';
 
@@ -634,4 +645,8 @@ const main = (async () => {
         parent.insertBefore(resultContainer, parent.firstChild.nextSibling.nextSibling);
         parent.insertBefore(inputContainer, parent.firstChild.nextSibling.nextSibling);
     }
+
+    const nowYear = new Date().getFullYear();
+    const targetYear = 2025;
+    footer.render(`© ${targetYear === nowYear ? nowYear: `${targetYear} ~ ${nowYear}`} DUCKODE | 技術筆記`);
 })();
