@@ -5,6 +5,8 @@
   --text: #e0faff;
   --border: rgba(255, 255, 255, 0.15);
   --radius: 16px;
+  --tag: #aaaa;
+  --tag-bg: rgba(255, 255, 255, 0.15);
 }
 
 ::-webkit-scrollbar {
@@ -12,13 +14,16 @@
   height: 6px;
   background-color: #778da9;
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--accent);
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: #b9fff4;
 }
+
 ::selection {
   background-color: var(--accent);
   color: black;
@@ -30,33 +35,33 @@
 }
 
 pre {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    background-color: #1e1e1e;
-    color: #ffffff;
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 0.95em;
-    padding: 16px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: pre;
-    overflow-x: auto;
-    display: block;
-    contain: inline-size;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background-color: #1e1e1e;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-size: 0.95em;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: pre;
+  overflow-x: auto;
+  display: block;
+  contain: inline-size;
 }
 
 pre code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    border: none;
+  background: none;
+  color: inherit;
+  padding: 0;
+  border: none;
 }
 
 pre code .no-select {
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }

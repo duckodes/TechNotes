@@ -156,7 +156,8 @@ aside.sidebar {
 }
 
 .cardTag {
-    background: var(--border);
+    color: var(--tag);
+    background: var(--tag-bg);
     border-radius: 8px;
     padding: 5px;
     width: fit-content;
@@ -167,7 +168,8 @@ aside.sidebar {
 }
 
 .tag {
-    background: var(--border);
+    color: var(--tag);
+    background: var(--tag-bg);
     border-radius: 8px;
     padding: 5px;
     width: fit-content;

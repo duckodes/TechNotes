@@ -7,6 +7,8 @@
     --highlight: #f9d5e5;
     --shadow: rgba(255, 182, 199, 0.3);
     --radius: 12px;
+    --tag: #3e1c1c;
+    --tag-bg: #f7b8d2;
 }
 
 ::-webkit-scrollbar {

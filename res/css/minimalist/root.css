@@ -14,13 +14,17 @@
 
     --font-sans: 'Noto Sans', 'Hiragino Sans', sans-serif;
     --font-mono: 'Fira Code', monospace;
+
+    --tag: #aaaa;
+    --tag-bg: #e5e5e5;
 }
 
 * {
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     height: 100%;

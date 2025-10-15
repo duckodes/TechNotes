@@ -7,6 +7,8 @@
     --radius: 10px;
     --highlight: #ffcd00;
     --muted: #888;
+    --tag: #aaaa;
+    --tag-bg: #333333;
 }
 
 ::-webkit-scrollbar {

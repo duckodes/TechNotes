@@ -199,7 +199,6 @@ const main = (async () => {
                 const tags = document.createElement('span');
                 tags.className = 'cardTag';
                 tags.style.fontSize = '0.8rem';
-                tags.style.color = '#aaaa';
                 tags.textContent = tag;
                 tags.onclick = (e) => {
                     e.stopPropagation();
@@ -355,7 +354,6 @@ const main = (async () => {
                     const tags = document.createElement('span');
                     tags.className = 'cardTag';
                     tags.style.fontSize = '0.8rem';
-                    tags.style.color = '#aaaa';
                     tags.textContent = tag;
                     tags.onclick = (e) => {
                         e.stopPropagation();

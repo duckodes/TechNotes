@@ -5,6 +5,8 @@
     --text: #e0e0e0;
     --border: #2c2f36;
     --radius: 10px;
+    --tag: #aaaa;
+    --tag-bg: #2c2f36;
 }
 
 ::-webkit-scrollbar {
