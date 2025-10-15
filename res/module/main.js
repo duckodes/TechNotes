@@ -195,7 +195,7 @@ const main = (async () => {
 
             const tagContainer = document.createElement('div');
             tagContainer.className = 'cardTagContainer';
-            article.tags.forEach(tag => {
+            article.tags?.forEach(tag => {
                 const tags = document.createElement('span');
                 tags.className = 'cardTag';
                 tags.style.fontSize = '0.8rem';
@@ -351,7 +351,7 @@ const main = (async () => {
                 const tagContainer = document.createElement('div');
                 tagContainer.className = 'cardTagContainer';
                 tagContainer.style.justifyContent = isMorning ? 'flex-end' : '';
-                article.tags.forEach(tag => {
+                article.tags?.forEach(tag => {
                     const tags = document.createElement('span');
                     tags.className = 'cardTag';
                     tags.style.fontSize = '0.8rem';
@@ -446,7 +446,7 @@ const main = (async () => {
             tagCloudArticleContainer.appendChild(tagCloudArticle);
             tagCloudArticleContainer.appendChild(tagCloudDate);
 
-            article.tags.forEach(articleTag => {
+            article.tags?.forEach(articleTag => {
                 const tagCloudtag = document.createElement('div');
                 tagCloudtag.className = 'tagCloudtag tag';
                 tagCloudtag.textContent = articleTag;
