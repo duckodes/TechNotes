@@ -48,8 +48,10 @@ const main = (async () => {
             return null;
         }
     }
+    let tags = [];
     onValue(ref(database, `technotes/user/${dataKey}`), async (snapshot) => {
         const data = snapshot.val();
+        tags = data.tags;
         if (!dataKey) {
             initProfile('', `無${urlSearchParams.get('user')}使用者資料`);
             return;
@@ -71,6 +73,11 @@ const main = (async () => {
 
     let lastCategoryIndex = null;
     let lastArticles = null;
+    let pageSelectOption = {
+        historyTracker: 0,
+        tagCloud: 1
+    };
+    let pageSelect = pageSelectOption.historyTracker;
 
     const topic = document.querySelector('.layout>header');
     async function UpdateTopic(text) {
@@ -91,6 +98,15 @@ const main = (async () => {
     });
     const histroyTracker = document.getElementById('histroyTracker');
     histroyTracker.addEventListener('click', () => {
+        pageSelect = pageSelectOption.historyTracker;
+        lastCategoryIndex = null;
+        UpdateCategoryList(lastArticles);
+        articleView.style.display = 'none';
+        articleContainer.style.display = 'flex';
+    });
+    const tagCloud = document.getElementById('tagCloud');
+    tagCloud.addEventListener('click', async () => {
+        pageSelect = pageSelectOption.tagCloud;
         lastCategoryIndex = null;
         UpdateCategoryList(lastArticles);
         articleView.style.display = 'none';
@@ -143,7 +159,14 @@ const main = (async () => {
         });
         if (!Object.keys(articles)[lastCategoryIndex]) {
             // renderArticles(articles, Object.keys(articles)[Object.keys(articles).length - 1]);
-            renderChronologicalOrder(articles);
+            switch (pageSelect) {
+                case pageSelectOption.historyTracker:
+                    renderChronologicalOrder(articles);
+                    break;
+                case pageSelectOption.tagCloud:
+                    renderTagCloud(articles);
+                    break;
+            }
         } else {
             renderArticles(articles, Object.keys(articles)[lastCategoryIndex]);
         }
@@ -321,6 +344,87 @@ const main = (async () => {
             });
         const linearHeight = (articleContainer.offsetHeight - allMargin ** 0.9) / allMargin;
         line.style.backgroundImage = `linear-gradient(to bottom, transparent, var(--accent) ${linearHeight}%, var(--accent) ${100 - linearHeight}%, transparent)`;
+    }
+    // 標籤雲
+    function renderTagCloud(articles) {
+        articleContainer.innerHTML = '';
+        const tagCloud = document.createElement('div');
+        tagCloud.innerHTML = '<h1>推薦標籤</h1>';
+        tags?.forEach(tag => {
+            let matchedArticles = [];
+            Object.values(articles).forEach(articleList => {
+                articleList.forEach(article => {
+                    if (article.tags?.includes(tag)) {
+                        matchedArticles.push(article);
+                    }
+                });
+            });
+            const tagCloudDisplay = document.createElement('span');
+            tagCloudDisplay.className = 'tagCloud';
+            tagCloudDisplay.textContent = `${tag} `;
+            const baseSize = 14;
+            const maxSize = 32;
+            const scale = 2;
+            let fontSize = baseSize + matchedArticles.length * scale;
+            fontSize = Math.min(fontSize, maxSize);
+            tagCloudDisplay.style.fontSize = (matchedArticles.length !== 0 ? fontSize : 0) + 'px';
+            const opacity = Math.min(0.2 + Math.log2(matchedArticles.length + 1) / 5, 1);
+            tagCloudDisplay.style.opacity = opacity;
+            const weight = Math.min(400 + matchedArticles.length * 50, 900);
+            tagCloudDisplay.style.fontWeight = weight;
+            tagCloudDisplay.addEventListener('click', () => {
+                renderArticles(tag);
+                function renderArticles(tag) {
+
+                    matchedArticles = [];
+                    Object.values(articles).forEach(articleList => {
+                        articleList.forEach(article => {
+                            if (article.tags?.includes(tag)) {
+                                matchedArticles.push(article);
+                            }
+                        });
+                    });
+
+                    articleContainer.innerHTML = '';
+
+                    const tagCloudArticleContainer = document.createElement('div');
+                    tagCloudArticleContainer.className = 'tagCloudArticleContainer';
+                    articleContainer.appendChild(tagCloudArticleContainer);
+                    const tagCloudArticleTitle = document.createElement('h1');
+                    tagCloudArticleTitle.className = 'tag';
+                    tagCloudArticleTitle.textContent = tag;
+                    tagCloudArticleContainer.appendChild(tagCloudArticleTitle);
+                    matchedArticles.forEach(article => {
+                        const tagCloudArticle = document.createElement('div');
+                        tagCloudArticle.className = 'tagCloudArticle';
+                        tagCloudArticle.innerHTML = `${article.title}`;
+                        tagCloudArticle.onclick = () => showArticle(article);
+                        const tagCloudDate = document.createElement('div');
+                        tagCloudDate.className = 'tagCloudDate';
+                        tagCloudDate.textContent = dateutils.ToDateTime(article.date);
+
+                        tagCloudArticleContainer.appendChild(tagCloudArticle);
+                        tagCloudArticleContainer.appendChild(tagCloudDate);
+
+                        article.tags.forEach(articleTag => {
+                            const tagCloudtag = document.createElement('div');
+                            tagCloudtag.className = 'tagCloudtag tag';
+                            tagCloudtag.textContent = articleTag;
+                            tagCloudtag.addEventListener('click', () => {
+                                renderArticles(articleTag);
+                            });
+                            tagCloudDate.insertBefore(tagCloudtag, tagCloudDate.firstChild);
+                        });
+                    });
+
+                    scrollUtils.margin(articleContainer, -20);
+                }
+            });
+
+            tagCloud.appendChild(tagCloudDisplay);
+        });
+        articleContainer.appendChild(tagCloud);
+        scrollUtils.margin(articleContainer, -20);
     }
 
 
@@ -648,5 +752,5 @@ const main = (async () => {
 
     const nowYear = new Date().getFullYear();
     const targetYear = 2025;
-    footer.render(`© ${targetYear === nowYear ? nowYear: `${targetYear} ~ ${nowYear}`} DUCKODE | 技術筆記`);
+    footer.render(`© ${targetYear === nowYear ? nowYear : `${targetYear} ~ ${nowYear}`} DUCKODE | 技術筆記`);
 })();

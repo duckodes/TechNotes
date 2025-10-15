@@ -138,6 +138,60 @@ aside.sidebar {
     cursor: pointer;
 }
 
+#tagCloud {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.tag {
+    background: var(--border);
+    border-radius: 8px;
+    padding: 5px;
+    width: fit-content;
+}
+
+.tagCloudDate {
+    font-size: 12px;
+    display: flex;
+    align-self: end;
+    align-items: center;
+}
+
+.tagCloudtag {
+    margin: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    align-self: center;
+}
+
+.tagCloud {
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.tagCloudArticleContainer {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.tagCloudArticle {
+    color: var(--text);
+    font-size: 30px;
+    text-decoration: underline;
+    text-decoration-color: var(--text);
+    cursor: pointer;
+    align-self: center;
+}
+
+.tagCloudArticle:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+}
+
 .category-box {
     background: var(--card-bg);
     border: 1px solid var(--border);
@@ -177,6 +231,19 @@ aside.sidebar {
     flex-wrap: wrap;
     gap: 2rem;
     justify-content: center;
+}
+
+.histroy-tracker-yearly-division {
+    position: sticky;
+    top: 0px;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(to right, var(--bg) 20%, transparent 50%);
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    z-index: 1;
 }
 
 .histroy-tracker-line {
