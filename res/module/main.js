@@ -51,7 +51,7 @@ const main = (async () => {
     let tags = [];
     onValue(ref(database, `technotes/user/${dataKey}`), async (snapshot) => {
         const data = snapshot.val();
-        tags = data.tags;
+        tags = data?.tags;
         if (!dataKey) {
             initProfile('', `無${urlSearchParams.get('user')}使用者資料`);
             return;
