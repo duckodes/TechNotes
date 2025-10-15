@@ -413,8 +413,10 @@ const main = (async () => {
         articleContainer.appendChild(tagCloud);
         scrollUtils.margin(articleContainer, -20);
     }
-    function renderTagArticles(tag, articles) {
-        matchedArticles = [];
+    function renderTagArticles(tag, articles, page = 1) {
+        const pageSize = 5;
+        let matchedArticles = [];
+
         Object.values(articles).forEach(articleList => {
             articleList.forEach(article => {
                 if (article.tags?.includes(tag)) {
@@ -423,20 +425,27 @@ const main = (async () => {
             });
         });
 
+        const totalPages = Math.ceil(matchedArticles.length / pageSize);
+        const startIndex = (page - 1) * pageSize;
+        const pagedArticles = matchedArticles.slice(startIndex, startIndex + pageSize);
+
         articleContainer.innerHTML = '';
 
         const tagCloudArticleContainer = document.createElement('div');
         tagCloudArticleContainer.className = 'tagCloudArticleContainer';
         articleContainer.appendChild(tagCloudArticleContainer);
+
         const tagCloudArticleTitle = document.createElement('h1');
         tagCloudArticleTitle.className = 'tag';
-        tagCloudArticleTitle.textContent = tag;
+        tagCloudArticleTitle.textContent = `${tag} – ${page}/${totalPages}`;
         tagCloudArticleContainer.appendChild(tagCloudArticleTitle);
-        matchedArticles.forEach(article => {
+
+        pagedArticles.forEach(article => {
             const tagCloudArticle = document.createElement('div');
             tagCloudArticle.className = 'tagCloudArticle';
             tagCloudArticle.innerHTML = `${article.title}`;
             tagCloudArticle.onclick = () => showArticle(article);
+
             const tagCloudDate = document.createElement('div');
             tagCloudDate.className = 'tagCloudDate';
             tagCloudDate.textContent = dateutils.ToDateTime(article.date);
@@ -449,11 +458,31 @@ const main = (async () => {
                 tagCloudtag.className = 'tagCloudtag tag';
                 tagCloudtag.textContent = articleTag;
                 tagCloudtag.addEventListener('click', () => {
-                    renderTagArticles(articleTag, articles);
+                    renderTagArticles(articleTag, articles, 1);
                 });
                 tagCloudDate.insertBefore(tagCloudtag, tagCloudDate.firstChild);
             });
         });
+
+        // 分頁控制
+        const pagination = document.createElement('div');
+        pagination.className = 'pagination';
+
+        if (page > 1) {
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = '«';
+            prevBtn.onclick = () => renderTagArticles(tag, articles, page - 1);
+            pagination.appendChild(prevBtn);
+        }
+
+        if (page < totalPages) {
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = '»';
+            nextBtn.onclick = () => renderTagArticles(tag, articles, page + 1);
+            pagination.appendChild(nextBtn);
+        }
+
+        articleContainer.appendChild(pagination);
 
         scrollUtils.margin(articleContainer, -20);
     }
