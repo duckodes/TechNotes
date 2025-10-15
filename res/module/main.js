@@ -193,9 +193,25 @@ const main = (async () => {
             date.style.color = '#aaaa';
             date.textContent = `${dateutils.ToDateTime(article.date)}`;
 
+            const tagContainer = document.createElement('div');
+            tagContainer.className = 'cardTagContainer';
+            article.tags.forEach(tag => {
+                const tags = document.createElement('span');
+                tags.className = 'cardTag';
+                tags.style.fontSize = '0.8rem';
+                tags.style.color = '#aaaa';
+                tags.textContent = tag;
+                tags.onclick = (e) => {
+                    e.stopPropagation();
+                    renderTagArticles(tag, articles);
+                };
+                tagContainer.appendChild(tags);
+            });
+
             card.appendChild(h3);
             card.appendChild(p);
             card.appendChild(date);
+            card.appendChild(tagContainer);
 
             card.onclick = () => showArticle(article);
             articleContainer.appendChild(card);
@@ -332,8 +348,25 @@ const main = (async () => {
                 h5.style.marginTop = '10px';
                 h5.style.textAlign = isMorning ? 'right' : 'left';
 
+                const tagContainer = document.createElement('div');
+                tagContainer.className = 'cardTagContainer';
+                tagContainer.style.justifyContent = isMorning ? 'flex-end' : '';
+                article.tags.forEach(tag => {
+                    const tags = document.createElement('span');
+                    tags.className = 'cardTag';
+                    tags.style.fontSize = '0.8rem';
+                    tags.style.color = '#aaaa';
+                    tags.textContent = tag;
+                    tags.onclick = (e) => {
+                        e.stopPropagation();
+                        renderTagArticles(tag, articles);
+                    };
+                    tagContainer.appendChild(tags);
+                });
+
                 card.appendChild(date);
                 card.appendChild(bottomLine);
+                card.appendChild(tagContainer);
                 card.appendChild(h5);
                 card.onclick = () => showArticle(article);
 
@@ -346,12 +379,13 @@ const main = (async () => {
         line.style.backgroundImage = `linear-gradient(to bottom, transparent, var(--accent) ${linearHeight}%, var(--accent) ${100 - linearHeight}%, transparent)`;
     }
     // 標籤雲
+    let matchedArticles = [];
     function renderTagCloud(articles) {
         articleContainer.innerHTML = '';
         const tagCloud = document.createElement('div');
         tagCloud.innerHTML = '<h1>推薦標籤</h1>';
         tags?.forEach(tag => {
-            let matchedArticles = [];
+            matchedArticles = [];
             Object.values(articles).forEach(articleList => {
                 articleList.forEach(article => {
                     if (article.tags?.includes(tag)) {
@@ -373,57 +407,56 @@ const main = (async () => {
             const weight = Math.min(400 + matchedArticles.length * 50, 900);
             tagCloudDisplay.style.fontWeight = weight;
             tagCloudDisplay.addEventListener('click', () => {
-                renderArticles(tag);
-                function renderArticles(tag) {
-
-                    matchedArticles = [];
-                    Object.values(articles).forEach(articleList => {
-                        articleList.forEach(article => {
-                            if (article.tags?.includes(tag)) {
-                                matchedArticles.push(article);
-                            }
-                        });
-                    });
-
-                    articleContainer.innerHTML = '';
-
-                    const tagCloudArticleContainer = document.createElement('div');
-                    tagCloudArticleContainer.className = 'tagCloudArticleContainer';
-                    articleContainer.appendChild(tagCloudArticleContainer);
-                    const tagCloudArticleTitle = document.createElement('h1');
-                    tagCloudArticleTitle.className = 'tag';
-                    tagCloudArticleTitle.textContent = tag;
-                    tagCloudArticleContainer.appendChild(tagCloudArticleTitle);
-                    matchedArticles.forEach(article => {
-                        const tagCloudArticle = document.createElement('div');
-                        tagCloudArticle.className = 'tagCloudArticle';
-                        tagCloudArticle.innerHTML = `${article.title}`;
-                        tagCloudArticle.onclick = () => showArticle(article);
-                        const tagCloudDate = document.createElement('div');
-                        tagCloudDate.className = 'tagCloudDate';
-                        tagCloudDate.textContent = dateutils.ToDateTime(article.date);
-
-                        tagCloudArticleContainer.appendChild(tagCloudArticle);
-                        tagCloudArticleContainer.appendChild(tagCloudDate);
-
-                        article.tags.forEach(articleTag => {
-                            const tagCloudtag = document.createElement('div');
-                            tagCloudtag.className = 'tagCloudtag tag';
-                            tagCloudtag.textContent = articleTag;
-                            tagCloudtag.addEventListener('click', () => {
-                                renderArticles(articleTag);
-                            });
-                            tagCloudDate.insertBefore(tagCloudtag, tagCloudDate.firstChild);
-                        });
-                    });
-
-                    scrollUtils.margin(articleContainer, -20);
-                }
+                renderTagArticles(tag, articles);
             });
 
             tagCloud.appendChild(tagCloudDisplay);
         });
         articleContainer.appendChild(tagCloud);
+        scrollUtils.margin(articleContainer, -20);
+    }
+    function renderTagArticles(tag, articles) {
+        matchedArticles = [];
+        Object.values(articles).forEach(articleList => {
+            articleList.forEach(article => {
+                if (article.tags?.includes(tag)) {
+                    matchedArticles.push(article);
+                }
+            });
+        });
+
+        articleContainer.innerHTML = '';
+
+        const tagCloudArticleContainer = document.createElement('div');
+        tagCloudArticleContainer.className = 'tagCloudArticleContainer';
+        articleContainer.appendChild(tagCloudArticleContainer);
+        const tagCloudArticleTitle = document.createElement('h1');
+        tagCloudArticleTitle.className = 'tag';
+        tagCloudArticleTitle.textContent = tag;
+        tagCloudArticleContainer.appendChild(tagCloudArticleTitle);
+        matchedArticles.forEach(article => {
+            const tagCloudArticle = document.createElement('div');
+            tagCloudArticle.className = 'tagCloudArticle';
+            tagCloudArticle.innerHTML = `${article.title}`;
+            tagCloudArticle.onclick = () => showArticle(article);
+            const tagCloudDate = document.createElement('div');
+            tagCloudDate.className = 'tagCloudDate';
+            tagCloudDate.textContent = dateutils.ToDateTime(article.date);
+
+            tagCloudArticleContainer.appendChild(tagCloudArticle);
+            tagCloudArticleContainer.appendChild(tagCloudDate);
+
+            article.tags.forEach(articleTag => {
+                const tagCloudtag = document.createElement('div');
+                tagCloudtag.className = 'tagCloudtag tag';
+                tagCloudtag.textContent = articleTag;
+                tagCloudtag.addEventListener('click', () => {
+                    renderTagArticles(articleTag, articles);
+                });
+                tagCloudDate.insertBefore(tagCloudtag, tagCloudDate.firstChild);
+            });
+        });
+
         scrollUtils.margin(articleContainer, -20);
     }
 
