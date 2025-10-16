@@ -179,6 +179,7 @@ aside.sidebar {
     border-radius: 8px;
     padding: 5px;
     width: fit-content;
+    border: 1px solid transparent;
 }
 
 .cardTag:hover {
@@ -198,6 +199,7 @@ aside.sidebar {
     display: flex;
     align-self: end;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .tagCloudtag {
@@ -205,6 +207,7 @@ aside.sidebar {
     font-size: 12px;
     cursor: pointer;
     align-self: center;
+    border: 1px solid transparent;
 }
 
 .tagCloudtag:hover {
@@ -331,7 +334,8 @@ aside.sidebar {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1rem;
-    width: 280px;
+    width: 100%;
+    max-width: 280px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transition: box-shadow 0.2s;
     cursor: pointer;

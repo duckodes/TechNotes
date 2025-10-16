@@ -65,6 +65,7 @@ header {
     display: grid;
     grid-template-columns: 260px 1fr;
     gap: 2rem;
+    word-break: break-word;
 }
 
 aside.sidebar {
@@ -195,6 +196,7 @@ aside.sidebar {
     display: flex;
     align-self: end;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .tagCloudtag {
@@ -328,7 +330,8 @@ aside.sidebar {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.2rem;
-    width: 280px;
+    width: 100%;
+    max-width: 280px;
     transition: box-shadow 0.2s ease;
     cursor: pointer;
 }
