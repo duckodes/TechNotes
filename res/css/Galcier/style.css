@@ -200,6 +200,7 @@ aside.sidebar {
     align-self: end;
     align-items: center;
     flex-wrap: wrap;
+    margin-bottom: 50px;
 }
 
 .tagCloudtag {
@@ -226,9 +227,9 @@ aside.sidebar {
 }
 
 .tagCloudArticle {
+    width: 100%;
     color: var(--text);
     font-size: 30px;
-    text-decoration: underline;
     text-decoration-color: var(--text);
     cursor: pointer;
     align-self: center;
@@ -236,6 +237,7 @@ aside.sidebar {
 
 .tagCloudArticle:hover {
     color: var(--accent);
+    text-decoration: underline;
     text-decoration-color: var(--accent);
 }
 
