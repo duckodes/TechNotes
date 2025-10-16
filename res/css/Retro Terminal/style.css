@@ -385,6 +385,30 @@ aside.sidebar {
   text-decoration: underline;
 }
 
+.articleMainText p {
+    border-left: 5px solid var(--border);
+    padding-left: 5px;
+    margin: 0;
+}
+
+.articleMainText>code {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    background-color: var(--border);
+    padding: 5px;
+    margin: 0px 5px;
+    border-radius: 5px;
+}
+
+.articleMainText table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.articleMainText td,
+.articleMainText th {
+    border: 2px solid var(--border);
+}
+
 .article-images {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

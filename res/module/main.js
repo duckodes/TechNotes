@@ -241,11 +241,11 @@ const main = (async () => {
                 `<img src="${img.src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
             ).join('')}</div>`
             : '';
-
+        article.content = convertToTable(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
-            <p>${article.content.replace(/\n/g, "<br>")}</p>
+            <div class="articleMainText">${article.content.replace(/\n/g, "<br>")}</div>
         `;
 
         articleContainer.style.display = 'none';
@@ -261,17 +261,40 @@ const main = (async () => {
                 `<img src="${src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
             ).join('')}</div>`
             : '';
-
+        article.content = convertToTable(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
-            <p>${article.content.replace(/\n/g, "<br>")}</p>
+            <div class="articleMainText">${article.content.replace(/\n/g, "<br>")}</div>
         `;
 
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
         scrollUtils.margin(articleView, -20);
         codeAdditional();
+    }
+    function convertToTable(text) {
+        return text.replace(
+            /(?:^|\n)(?:(?:[^\n]*\|[^\n]*)\n?){2,}/g,
+            match => {
+                // 檢查是否在 <pre> 或 <code> 區塊內（簡單防禦）
+                if (/<pre[\s\S]*?>[\s\S]*$/.test(text.split(match)[0]) &&
+                    /<\/pre>/.test(text.split(match)[1])) {
+                    return match; // 不處理 <pre> 內的內容
+                }
+
+                const rows = match.trim().split('\n');
+                const tableRows = rows.map((line, index) => {
+                    const cleanedLine = line.trim().replace(/^(\|)+|(\|)+$/g, '');
+                    const cells = cleanedLine.split('|').map(cell => cell.trim());
+                    const tag = index === 0 ? 'th' : 'td';
+                    const rowHtml = cells.map(cell => `<${tag}>${cell}</${tag}>`).join('');
+                    return `<tr>${rowHtml}</tr>`;
+                });
+
+                return `<table>${tableRows.join('')}</table>`;
+            }
+        );
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {
