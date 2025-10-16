@@ -176,6 +176,7 @@ aside.sidebar {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
+    margin-top: 10px;
 }
 
 .cardTag {
@@ -187,7 +188,7 @@ aside.sidebar {
 }
 
 .cardTag:hover {
-    box-shadow: 0 2px 6px 3px var(--border);
+    box-shadow: 0 2px 6px 3px var(--tag-hover);
 }
 
 .tag {
@@ -210,6 +211,10 @@ aside.sidebar {
     font-size: 12px;
     cursor: pointer;
     align-self: center;
+}
+
+.tagCloudtag:hover {
+    box-shadow: 0 2px 6px 3px var(--tag-hover);
 }
 
 .tagCloud {

@@ -6,7 +6,8 @@
     --border: #00ff00;
     --radius: 0px;
     --tag: #000000;
-    --tag-bg: #00ff00;
+    --tag-hover: #00ff00;
+    --tag-bg: #00c400;
 }
 
 ::-webkit-scrollbar {
