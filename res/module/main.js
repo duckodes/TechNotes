@@ -262,6 +262,7 @@ const main = (async () => {
             ).join('')}</div>`
             : '';
         article.content = convertToTable(article.content);
+        article.content = convertToSyntax(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
@@ -295,6 +296,49 @@ const main = (async () => {
                 return `<table>${tableRows.join('')}</table>`;
             }
         );
+    }
+    function convertToSyntax(text) {
+        const lines = text.split('\n');
+        const htmlLines = lines.map(line => {
+            const trimmed = line.trim();
+
+            // <a> 超連結
+            if (/^.+->https?:\/\/.+/.test(trimmed)) {
+                const [content, link] = trimmed.split('->');
+                return `<a href="${link.trim()}">${content.trim()}</a>`;
+            }
+
+            // <img> 圖片
+            if (/^->\(.+\)$/.test(trimmed)) {
+                const url = trimmed.slice(3, -1).trim();
+                return `<img src="${url}">`;
+            }
+
+            // <span>
+            if (/^->\s+.+/.test(trimmed)) {
+                const content = trimmed.slice(2).trim();
+                return `<span>${content}</span>`;
+            }
+
+            // <p>
+            if (/^-.+>$/.test(trimmed)) {
+                const content = trimmed.slice(1, -1).trim();
+                return `<p>${content}</p>`;
+            }
+
+            // <h1> 到 <h6>
+            if (/^\++\s+.+/.test(trimmed)) {
+                const plusCount = trimmed.match(/^(\++)/)[1].length;
+                const headingLevel = 7 - plusCount; // + → h6, ++ → h5, ..., ++++++ → h1
+                const content = trimmed.replace(/^\++\s+/, '');
+                return `<h${headingLevel}>${content}</h${headingLevel}>`;
+            }
+
+            // 其他行原樣保留
+            return trimmed;
+        });
+
+        return htmlLines.join('\n');
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {

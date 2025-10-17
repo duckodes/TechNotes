@@ -425,7 +425,7 @@ aside.sidebar {
     margin: 0;
 }
 
-.articleMainText span {
+.articleMainText span:not(code span) {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     background-color: var(--border);
     padding: 5px;
