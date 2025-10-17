@@ -391,9 +391,10 @@ aside.sidebar {
     margin: 0;
 }
 
-.articleMainText>code {
+.articleMainText>span {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     background-color: var(--border);
+    color: var(--bg);
     padding: 5px;
     margin: 0px 5px;
     border-radius: 5px;
