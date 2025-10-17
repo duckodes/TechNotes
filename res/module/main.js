@@ -245,8 +245,13 @@ const main = (async () => {
         convertToText.innerHTML = article.content;
         article.content = convertToText.textContent;
         article.content = convertToTable(article.content);
-        article.content = convertToSyntax(article.content);
+        article.content = convertToLinksNewTab(article.content);
+        article.content = convertToLinks(article.content);
+        article.content = convertToImages(article.content);
+        article.content = convertToHeadings(article.content);
         article.content = convertToStrong(article.content);
+        article.content = convertToSpanWithSize(article.content);
+        article.content = convertToParagraphWithSize(article.content);
         article.content = convertToCodeBlocks(article.content);
         article.content = convertToIframes(article.content);
         articleBody.innerHTML = `
@@ -272,9 +277,15 @@ const main = (async () => {
         const convertToText = document.createElement('div');
         convertToText.innerHTML = article.content;
         article.content = convertToText.textContent;
+
         article.content = convertToTable(article.content);
-        article.content = convertToSyntax(article.content);
+        article.content = convertToLinksNewTab(article.content);
+        article.content = convertToLinks(article.content);
+        article.content = convertToImages(article.content);
+        article.content = convertToHeadings(article.content);
         article.content = convertToStrong(article.content);
+        article.content = convertToSpanWithSize(article.content);
+        article.content = convertToParagraphWithSize(article.content);
         article.content = convertToCodeBlocks(article.content);
         article.content = convertToIframes(article.content);
         articleBody.innerHTML = `
@@ -312,104 +323,55 @@ const main = (async () => {
             }
         );
     }
-    function convertToSyntax(text) {
-        const lines = text.split('\n');
-        const htmlLines = [];
-        let inParagraph = false;
-        let paragraphBuffer = [];
-
-        const parseContent = (line) => {
-            let html = line;
-
-            // <img> 圖片：->(link)
-            html = html.replace(/->\((.+?)\)/g, (_, url) => `<img src="${url.trim()}">`);
-
-            // <a> 超連結（新開視窗）：+content+>link
-            html = html.replace(/\+(.+?)\+>(https?:\/\/[^\s]+)/g, (_, content, link) => `<a href="${link.trim()}" target="_blank">${content.trim()}</a>`);
-
-            // <a> 超連結：-content->link
-            html = html.replace(/-(.+?)->(https?:\/\/[^\s]+)/g, (_, content, link) => `<a href="${link.trim()}">${content.trim()}</a>`);
-
-            // <span>：-> content
-            html = html.replace(/->\s+([^\n]+)/g, (_, content) => `<span>${content.trim()}</span>`);
-
-            return html;
-        };
-
-        const flushParagraph = () => {
-            if (paragraphBuffer.length > 0) {
-                const raw = paragraphBuffer.join('\n').trim();
-
-                // 嘗試抓出 font-size（例如 >20）
-                const sizeMatch = raw.match(/>(\d+)\s*$/);
-                const size = sizeMatch ? sizeMatch[1] : null;
-
-                // 移除開頭的 - 和結尾的 > 或 >數字
-                let content = raw;
-
-                // 如果有指定 font-size，就移除 >數字
-                if (size) {
-                    content = content.replace(/>(\d+)\s*$/, '');
-                } else {
-                    // 否則只移除單純的 >
-                    content = content.replace(/>\s*$/, '');
-                }
-
-                // 再移除開頭的 -
-                content = content.replace(/^-\s*/, '').trim();
-
-                // 最後輸出段落
-                const style = size ? ` style="font-size:${size}px"` : '';
-                htmlLines.push(`<p${style}>${parseContent(content)}</p>`);
-
-                paragraphBuffer = [];
-            }
-        };
-
-        const isInlineLink = (line) => {
-            return /^\+.+\+>https?:\/\/.+/.test(line) || /^-.+->https?:\/\/.+/.test(line);
-        };
-
-        for (let line of lines) {
-            const trimmed = line;
-
-            // 優先處理超連結語法（避免與標題衝突）
-            if (isInlineLink(trimmed)) {
-                htmlLines.push(parseContent(trimmed));
-            }
-            // 段落開始
-            else if (/^-.*/.test(trimmed) && !inParagraph) {
-                inParagraph = true;
-                paragraphBuffer.push(trimmed);
-                if (/>\d*\s*$/.test(trimmed)) {
-                    flushParagraph();
-                    inParagraph = false;
-                }
-            }
-            // 段落中
-            else if (inParagraph) {
-                paragraphBuffer.push(trimmed);
-                if (/>$/.test(trimmed)) {
-                    flushParagraph();
-                    inParagraph = false;
-                }
-            }
-            // 標題行（排除超連結語法）
-            else if (/^\++/.test(trimmed)) {
-                const plusMatch = trimmed.match(/^(\++)/);
-                const plusCount = plusMatch ? plusMatch[1].length : 0;
-                const headingLevel = Math.max(1, 7 - plusCount);
-                const inner = trimmed.replace(/^(\++)\s*/, '');
-                const parsedInner = parseContent(inner);
-                htmlLines.push(`<h${headingLevel}>${parsedInner}</h${headingLevel}>`);
-            }
-            // 其他行
-            else {
-                htmlLines.push(parseContent(trimmed));
-            }
-        }
-
-        return htmlLines.join('\n');
+    function convertToLinks(text) {
+        return text.replace(/\[a:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, href, content) => {
+            return `<a href="${href.trim()}">${content.trim()}</a>`;
+        });
+    }
+    function convertToLinksNewTab(text) {
+        return text.replace(/\[\+a:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, href, content) => {
+            return `<a href="${href.trim()}" target="_blank" rel="noopener noreferrer">${content.trim()}</a>`;
+        });
+    }
+    function convertToImages(text) {
+        return text.replace(/\[img:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, src, alt) => {
+            return `<img src="${src.trim()}" alt="${alt.trim()}" loading="lazy" />`;
+        });
+    }
+    function convertToHeadings(text) {
+        return text.replace(/\[(h[1-6])\[\[([\s\S]*?)\]\]\]/g, (match, tag, content) => {
+            return `<${tag}>${content.trim()}</${tag}>`;
+        });
+    }
+    function convertToSpanWithSize(text) {
+        return text
+            .replace(/\[span:(\d+)\[\[([\s\S]*?)\]\]\]/g, (match, size, content) => {
+                const fontSize = Math.min(parseInt(size, 10), 72);
+                return `<span style="font-size:${fontSize}px">${content.trim()}</span>`;
+            })
+            .replace(/\[span\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
+                return `<span>${content.trim()}</span>`;
+            });
+    }
+    function convertToParagraphWithSize(text) {
+        return text
+            .replace(/\[p:(\d+)\[\[([\s\S]*?)\]\]\]/g, (match, size, content) => {
+                const fontSize = Math.min(parseInt(size, 10), 72);
+                return `<p style="font-size:${fontSize}px">${content.trim()}</p>`;
+            })
+            .replace(/\[p\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
+                return `<p>${content.trim()}</p>`;
+            });
+    }
+    function convertToStrong(text) {
+        return text
+            .replace(/\[strong:(\d+)\[\[([\s\S]*?)\]\]\]/g, (match, size, content) => {
+                const fontSize = Math.min(parseInt(size, 10), 72);
+                return `<strong style="font-size:${fontSize}px">${content.trim()}</strong>`;
+            })
+            .replace(/\[strong\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
+                return `<strong>${content.trim()}</strong>`;
+            });
     }
     function escapeHTML(str) {
         return str
@@ -420,21 +382,14 @@ const main = (async () => {
             .replace(/'/g, "&#039;");
     }
     function convertToCodeBlocks(text) {
-        return text.replace(/\[([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, className, content) => {
-            const escaped = escapeHTML(content);
-            return `<pre><code class="${className}">${escaped}</code></pre>`;
-        });
-    }
-    function convertToCodeBlocksNoEscapeHTML(text) {
-        return text.replace(/\[([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, className, content) => {
-            return `<pre><code class="${className}">${content}</code></pre>`;
+        return text.replace(/\[code:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, language, content) => {
+            return `<pre><code class="${language}">${content}</code></pre>`;
         });
     }
     function convertToIframes(text) {
         return text.replace(/\(iframe:([^\[\]]+)\[\[([\s\S]*?)\]\]\)/g, (match, attrString, url) => {
             const attrs = extractWidthHeight(attrString.trim());
-            const safeURL = escapeHTML(url.trim());
-            return `<iframe ${attrs} src="${safeURL}" loading="lazy" referrerpolicy="no-referrer"></iframe>`;
+            return `<iframe ${attrs} src="${url.trim()}" loading="lazy" referrerpolicy="no-referrer"></iframe>`;
         });
         function extractWidthHeight(attrString) {
             const widthMatch = attrString.match(/width=["']([^"']+)["']/);
@@ -445,11 +400,6 @@ const main = (async () => {
 
             return [width, height].filter(Boolean).join(' ');
         }
-    }
-    function convertToStrong(text) {
-        return text.replace(/\[strong\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
-            return `<strong>${escapeHTML(content.trim())}</strong>`;
-        });
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {
@@ -872,6 +822,7 @@ const main = (async () => {
                         || stripHTML(article.content).toLowerCase().includes(keyword)
                         || stripHTML(article.summary).toLowerCase().includes(keyword)
                         || stripHTML(article.title).toLowerCase().includes(keyword)) {
+
                         matchedArticles.push({
                             category,
                             content: highlight(article.content, keyword),
@@ -949,6 +900,19 @@ const main = (async () => {
                     item.style.backgroundColor = 'var(--bg)';
                     item.style.borderBottomLeftRadius = '10px';
                     item.style.borderBottomRightRadius = '10px';
+                    
+                    let copyContent = article.content;
+                    article.content = convertToTable(article.content);
+                    article.content = convertToLinksNewTab(article.content);
+                    article.content = convertToLinks(article.content);
+                    article.content = convertToImages(article.content);
+                    article.content = convertToHeadings(article.content);
+                    article.content = convertToStrong(article.content);
+                    article.content = convertToSpanWithSize(article.content);
+                    article.content = convertToParagraphWithSize(article.content);
+                    article.content = convertToCodeBlocks(article.content);
+                    article.content = convertToIframes(article.content);
+
                     item.innerHTML = `
                         <h2 id="articleTitle" style="color: var(--accent);">
                             ${article.title}
@@ -957,9 +921,10 @@ const main = (async () => {
                             <p style="fontSize: 0.8rem;color: #aaaa;">
                                 ${article.dateText}
                             </p>
-                            ${convertToCodeBlocksNoEscapeHTML(article.content)}
+                            ${article.content}
                         </span>
                         `;
+                    article.content = copyContent;
                     item.addEventListener('mouseenter', () => {
                         topicItem.style.backgroundColor = 'var(--border)';
                         item.style.backgroundColor = 'var(--border)';
