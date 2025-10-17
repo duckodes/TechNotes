@@ -241,8 +241,14 @@ const main = (async () => {
                 `<img src="${img.src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
             ).join('')}</div>`
             : '';
+        const convertToText = document.createElement('div');
+        convertToText.innerHTML = article.content;
+        article.content = convertToText.textContent;
         article.content = convertToTable(article.content);
         article.content = convertToSyntax(article.content);
+        article.content = convertToStrong(article.content);
+        article.content = convertToCodeBlocks(article.content);
+        article.content = convertToIframes(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
@@ -262,8 +268,14 @@ const main = (async () => {
                 `<img src="${src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
             ).join('')}</div>`
             : '';
+        const convertToText = document.createElement('div');
+        convertToText.innerHTML = article.content;
+        article.content = convertToText.textContent;
         article.content = convertToTable(article.content);
         article.content = convertToSyntax(article.content);
+        article.content = convertToStrong(article.content);
+        article.content = convertToCodeBlocks(article.content);
+        article.content = convertToIframes(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
@@ -396,6 +408,41 @@ const main = (async () => {
         }
 
         return htmlLines.join('\n');
+    }
+    function escapeHTML(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+    function convertToCodeBlocks(text) {
+        return text.replace(/\[([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, className, content) => {
+            const escaped = escapeHTML(content);
+            return `<pre><code class="${className}">${escaped}</code></pre>`;
+        });
+    }
+    function convertToIframes(text) {
+        return text.replace(/\(iframe:([^\[\]]+)\[\[([\s\S]*?)\]\]\)/g, (match, attrString, url) => {
+            const attrs = extractWidthHeight(attrString.trim());
+            const safeURL = escapeHTML(url.trim());
+            return `<iframe ${attrs} src="${safeURL}" loading="lazy" referrerpolicy="no-referrer"></iframe>`;
+        });
+        function extractWidthHeight(attrString) {
+            const widthMatch = attrString.match(/width=["']([^"']+)["']/);
+            const heightMatch = attrString.match(/height=["']([^"']+)["']/);
+
+            const width = widthMatch ? `width="${escapeHTML(widthMatch[1])}"` : '';
+            const height = heightMatch ? `height="${escapeHTML(heightMatch[1])}"` : '';
+
+            return [width, height].filter(Boolean).join(' ');
+        }
+    }
+    function convertToStrong(text) {
+        return text.replace(/\[strong\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
+            return `<strong>${escapeHTML(content.trim())}</strong>`;
+        });
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {
