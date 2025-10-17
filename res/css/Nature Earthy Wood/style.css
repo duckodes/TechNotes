@@ -374,7 +374,7 @@ aside.sidebar {
     padding: 2rem;
 }
 
-.article-content h2 {
+.article-content>h2 {
     color: var(--accent);
     margin-top: 0;
 }
@@ -389,13 +389,22 @@ aside.sidebar {
     text-decoration: underline;
 }
 
+.articleMainText h1,
+.articleMainText h2,
+.articleMainText h3,
+.articleMainText h4,
+.articleMainText h5,
+.articleMainText h6 {
+    margin: 0;
+}
+
 .articleMainText p {
     border-left: 5px solid var(--border);
     padding-left: 5px;
     margin: 0;
 }
 
-.articleMainText>span {
+.articleMainText span {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     background-color: var(--border);
     padding: 5px;

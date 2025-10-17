@@ -379,7 +379,7 @@ aside.sidebar {
     box-shadow: 0 4px 12px var(--shadow);
 }
 
-.article-content h2 {
+.article-content>h2 {
     color: var(--accent);
     font-size: 1.8rem;
     margin-top: 0;
@@ -396,13 +396,22 @@ aside.sidebar {
     text-decoration: none;
 }
 
+.articleMainText h1,
+.articleMainText h2,
+.articleMainText h3,
+.articleMainText h4,
+.articleMainText h5,
+.articleMainText h6 {
+    margin: 0;
+}
+
 .articleMainText p {
     border-left: 5px solid var(--border);
     padding-left: 5px;
     margin: 0;
 }
 
-.articleMainText>span {
+.articleMainText span {
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     background-color: var(--border);
     padding: 5px;
