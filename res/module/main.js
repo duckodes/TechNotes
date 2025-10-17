@@ -425,6 +425,11 @@ const main = (async () => {
             return `<pre><code class="${className}">${escaped}</code></pre>`;
         });
     }
+    function convertToCodeBlocksNoEscapeHTML(text) {
+        return text.replace(/\[([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, className, content) => {
+            return `<pre><code class="${className}">${content}</code></pre>`;
+        });
+    }
     function convertToIframes(text) {
         return text.replace(/\(iframe:([^\[\]]+)\[\[([\s\S]*?)\]\]\)/g, (match, attrString, url) => {
             const attrs = extractWidthHeight(attrString.trim());
@@ -952,7 +957,7 @@ const main = (async () => {
                             <p style="fontSize: 0.8rem;color: #aaaa;">
                                 ${article.dateText}
                             </p>
-                            ${article.content}
+                            ${convertToCodeBlocksNoEscapeHTML(article.content)}
                         </span>
                         `;
                     item.addEventListener('mouseenter', () => {
