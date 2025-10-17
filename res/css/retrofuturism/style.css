@@ -415,6 +415,9 @@ aside.sidebar {
 }
 
 .articleMainText span:not(code span) {
+    display: inline-block;
+    line-height: 1;
+    vertical-align: middle;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     background-color: var(--border);
     padding: 5px;

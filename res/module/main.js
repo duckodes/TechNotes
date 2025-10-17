@@ -242,6 +242,7 @@ const main = (async () => {
             ).join('')}</div>`
             : '';
         article.content = convertToTable(article.content);
+        article.content = convertToSyntax(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
             ${imageHTML}
@@ -299,44 +300,100 @@ const main = (async () => {
     }
     function convertToSyntax(text) {
         const lines = text.split('\n');
-        const htmlLines = lines.map(line => {
-            const trimmed = line.trim();
+        const htmlLines = [];
+        let inParagraph = false;
+        let paragraphBuffer = [];
 
-            // <a> 超連結
-            if (/^.+->https?:\/\/.+/.test(trimmed)) {
-                const [content, link] = trimmed.split('->');
-                return `<a href="${link.trim()}">${content.trim()}</a>`;
+        const parseContent = (line) => {
+            let html = line;
+
+            // <img> 圖片：->(link)
+            html = html.replace(/->\((.+?)\)/g, (_, url) => `<img src="${url.trim()}">`);
+
+            // <a> 超連結（新開視窗）：+content+>link
+            html = html.replace(/\+(.+?)\+>(https?:\/\/[^\s]+)/g, (_, content, link) => `<a href="${link.trim()}" target="_blank">${content.trim()}</a>`);
+
+            // <a> 超連結：-content->link
+            html = html.replace(/-(.+?)->(https?:\/\/[^\s]+)/g, (_, content, link) => `<a href="${link.trim()}">${content.trim()}</a>`);
+
+            // <span>：-> content
+            html = html.replace(/->\s+([^\n]+)/g, (_, content) => `<span>${content.trim()}</span>`);
+
+            return html;
+        };
+
+        const flushParagraph = () => {
+            if (paragraphBuffer.length > 0) {
+                const raw = paragraphBuffer.join('\n').trim();
+
+                // 嘗試抓出 font-size（例如 >20）
+                const sizeMatch = raw.match(/>(\d+)\s*$/);
+                const size = sizeMatch ? sizeMatch[1] : null;
+
+                // 移除開頭的 - 和結尾的 > 或 >數字
+                let content = raw;
+
+                // 如果有指定 font-size，就移除 >數字
+                if (size) {
+                    content = content.replace(/>(\d+)\s*$/, '');
+                } else {
+                    // 否則只移除單純的 >
+                    content = content.replace(/>\s*$/, '');
+                }
+
+                // 再移除開頭的 -
+                content = content.replace(/^-\s*/, '').trim();
+
+                // 最後輸出段落
+                const style = size ? ` style="font-size:${size}px"` : '';
+                htmlLines.push(`<p${style}>${parseContent(content)}</p>`);
+
+                paragraphBuffer = [];
             }
+        };
 
-            // <img> 圖片
-            if (/^->\(.+\)$/.test(trimmed)) {
-                const url = trimmed.slice(3, -1).trim();
-                return `<img src="${url}">`;
+        const isInlineLink = (line) => {
+            return /^\+.+\+>https?:\/\/.+/.test(line) || /^-.+->https?:\/\/.+/.test(line);
+        };
+
+        for (let line of lines) {
+            const trimmed = line;
+
+            // 優先處理超連結語法（避免與標題衝突）
+            if (isInlineLink(trimmed)) {
+                htmlLines.push(parseContent(trimmed));
             }
-
-            // <span>
-            if (/^->\s+.+/.test(trimmed)) {
-                const content = trimmed.slice(2).trim();
-                return `<span>${content}</span>`;
+            // 段落開始
+            else if (/^-.*/.test(trimmed) && !inParagraph) {
+                inParagraph = true;
+                paragraphBuffer.push(trimmed);
+                if (/>\d*\s*$/.test(trimmed)) {
+                    flushParagraph();
+                    inParagraph = false;
+                }
             }
-
-            // <p>
-            if (/^-.+>$/.test(trimmed)) {
-                const content = trimmed.slice(1, -1).trim();
-                return `<p>${content}</p>`;
+            // 段落中
+            else if (inParagraph) {
+                paragraphBuffer.push(trimmed);
+                if (/>$/.test(trimmed)) {
+                    flushParagraph();
+                    inParagraph = false;
+                }
             }
-
-            // <h1> 到 <h6>
-            if (/^\++\s+.+/.test(trimmed)) {
-                const plusCount = trimmed.match(/^(\++)/)[1].length;
-                const headingLevel = 7 - plusCount; // + → h6, ++ → h5, ..., ++++++ → h1
-                const content = trimmed.replace(/^\++\s+/, '');
-                return `<h${headingLevel}>${content}</h${headingLevel}>`;
+            // 標題行（排除超連結語法）
+            else if (/^\++/.test(trimmed)) {
+                const plusMatch = trimmed.match(/^(\++)/);
+                const plusCount = plusMatch ? plusMatch[1].length : 0;
+                const headingLevel = Math.max(1, 7 - plusCount);
+                const inner = trimmed.replace(/^(\++)\s*/, '');
+                const parsedInner = parseContent(inner);
+                htmlLines.push(`<h${headingLevel}>${parsedInner}</h${headingLevel}>`);
             }
-
-            // 其他行原樣保留
-            return trimmed;
-        });
+            // 其他行
+            else {
+                htmlLines.push(parseContent(trimmed));
+            }
+        }
 
         return htmlLines.join('\n');
     }
