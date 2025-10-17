@@ -254,6 +254,7 @@ const main = (async () => {
             ${imageHTML}
             <div class="articleMainText">${article.content.replace(/\n/g, "<br>")}</div>
         `;
+        article.content = convertToText.innerHTML;
 
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
@@ -281,6 +282,7 @@ const main = (async () => {
             ${imageHTML}
             <div class="articleMainText">${article.content.replace(/\n/g, "<br>")}</div>
         `;
+        article.content = convertToText.innerHTML;
 
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
@@ -870,6 +872,7 @@ const main = (async () => {
                             content: highlight(article.content, keyword),
                             summary: highlight(article.summary, keyword),
                             title: highlight(article.title, keyword),
+                            images: article.images,
                             date: article.date,
                             dateText: highlight(dateutils.ToDateTime(article.date), keyword)
                         });
