@@ -253,6 +253,7 @@ const main = (async () => {
         article.content = convertToSpanWithSize(article.content);
         article.content = convertToParagraphWithSize(article.content);
         article.content = convertToCodeBlocks(article.content);
+        article.content = convertToListBlocks(article.content);
         article.content = convertToIframes(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
@@ -287,6 +288,7 @@ const main = (async () => {
         article.content = convertToSpanWithSize(article.content);
         article.content = convertToParagraphWithSize(article.content);
         article.content = convertToCodeBlocks(article.content);
+        article.content = convertToListBlocks(article.content);
         article.content = convertToIframes(article.content);
         articleBody.innerHTML = `
             <p style="fontSize: 0.8rem;color: #aaaa;">${dateutils.ToDateTime(article.date)}</p>
@@ -400,6 +402,45 @@ const main = (async () => {
 
             return [width, height].filter(Boolean).join(' ');
         }
+    }
+
+    function convertToListBlocks(text) {
+        function parseBlock(text) {
+            let i = 0;
+            const stack = [];
+            let output = '';
+
+            while (i < text.length) {
+                if (text.startsWith('[ul[[', i) || text.startsWith('[ol[[', i)) {
+                    const type = text.startsWith('[ul[[', i) ? 'ul' : 'ol';
+                    stack.push(type);
+                    output += `<${type}>`;
+                    i += 5;
+                } else if (text.startsWith('[li', i)) {
+                    const liMatch = text.slice(i).match(/^\[li(?::([a-zA-Z\-]+))?\[\[/);
+                    if (liMatch) {
+                        const style = liMatch[1];
+                        const styleAttr = style ? ` style="list-style-type:${style};"` : '';
+                        stack.push('li');
+                        output += `<li${styleAttr}>`;
+                        i += liMatch[0].length;
+                    } else {
+                        i++;
+                    }
+                } else if (text.startsWith(']]]', i)) {
+                    const last = stack.pop();
+                    output += `</${last}>`;
+                    i += 3;
+                } else {
+                    output += text[i];
+                    i++;
+                }
+            }
+
+            return output;
+        }
+
+        return parseBlock(text.trim());
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {
@@ -900,7 +941,7 @@ const main = (async () => {
                     item.style.backgroundColor = 'var(--bg)';
                     item.style.borderBottomLeftRadius = '10px';
                     item.style.borderBottomRightRadius = '10px';
-                    
+
                     let copyContent = article.content;
                     article.content = convertToTable(article.content);
                     article.content = convertToLinksNewTab(article.content);
