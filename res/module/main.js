@@ -414,10 +414,10 @@ const main = (async () => {
     function convertToCodeBlocks(text) {
         return text
             .replace(/\[code:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, language, content) => {
-                return `<pre><code class="${language}">${content.trimStart()}</code></pre>`;
+                return `<pre><code class="${language}">${content.trimStart().trimEnd()}</code></pre>`;
             })
             .replace(/\[code\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
-                return `<pre><code>${content.trimStart()}</code></pre>`;
+                return `<pre><code>${content.trimStart().trimEnd()}</code></pre>`;
             });;
     }
     function convertToIframes(text) {
