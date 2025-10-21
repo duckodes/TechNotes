@@ -261,6 +261,11 @@ const main = (async () => {
             <div class="articleMainText">${article.content.replace(/\n/g, "<br>")}</div>
         `;
         article.content = convertToText.innerHTML;
+        articleBody.querySelectorAll('P').forEach(p => {
+            if (p.nextSibling && p.nextSibling.nodeName === 'BR') {
+                p.nextSibling.remove();
+            }
+        });
         articleBody.querySelectorAll('ul').forEach(ul => {
             ul.querySelectorAll('br').forEach(br => br.remove());
             if (ul.previousSibling && ul.previousSibling.nodeName === 'BR') {
@@ -310,6 +315,11 @@ const main = (async () => {
             <div class="articleMainText">${article.content.replace(/\n/g, "<br>")}</div>
         `;
         article.content = convertToText.innerHTML;
+        articleBody.querySelectorAll('P').forEach(p => {
+            if (p.nextSibling && p.nextSibling.nodeName === 'BR') {
+                p.nextSibling.remove();
+            }
+        });
         articleBody.querySelectorAll('ul').forEach(ul => {
             ul.querySelectorAll('br').forEach(br => br.remove());
             if (ul.previousSibling && ul.previousSibling.nodeName === 'BR') {
