@@ -89,6 +89,15 @@ aside.sidebar {
     box-shadow: 0 4px 8px var(--shadow);
 }
 
+.profile-links {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-links svg {
+    margin: 5px;
+}
+
 .avatar {
     width: 90px;
     height: 90px;

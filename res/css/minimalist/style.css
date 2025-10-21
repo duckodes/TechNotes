@@ -70,6 +70,15 @@ aside.sidebar {
     border: 1px solid var(--border);
 }
 
+.profile-links {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-links svg {
+    margin: 5px;
+}
+
 .avatar {
     width: 64px;
     height: 64px;

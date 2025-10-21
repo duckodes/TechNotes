@@ -102,6 +102,15 @@ aside.sidebar {
     border-radius: 15px;
 }
 
+.profile-links {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-links svg {
+    margin: 5px;
+}
+
 .avatar {
     width: 90px;
     height: 90px;

@@ -85,6 +85,15 @@ aside.sidebar {
     box-shadow: var(--glow);
 }
 
+.profile-links {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-links svg {
+    margin: 5px;
+}
+
 .avatar {
     width: 100px;
     height: 100px;
