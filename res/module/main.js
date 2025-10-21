@@ -270,6 +270,11 @@ const main = (async () => {
                 ul.nextSibling.remove();
             }
         });
+        articleBody.querySelectorAll('pre').forEach(pre => {
+            if (pre.nextSibling && pre.nextSibling.nodeName === 'BR') {
+                pre.nextSibling.remove();
+            }
+        });
 
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
@@ -312,6 +317,11 @@ const main = (async () => {
             }
             if (ul.nextSibling && ul.nextSibling.nodeName === 'BR') {
                 ul.nextSibling.remove();
+            }
+        });
+        articleBody.querySelectorAll('pre').forEach(pre => {
+            if (pre.nextSibling && pre.nextSibling.nodeName === 'BR') {
+                pre.nextSibling.remove();
             }
         });
 
@@ -402,9 +412,13 @@ const main = (async () => {
             .replace(/'/g, "&#039;");
     }
     function convertToCodeBlocks(text) {
-        return text.replace(/\[code:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, language, content) => {
-            return `<pre><code class="${language}">${content}</code></pre>`;
-        });
+        return text
+            .replace(/\[code:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, language, content) => {
+                return `<pre><code class="${language}">${content.trimStart()}</code></pre>`;
+            })
+            .replace(/\[code\[\[([\s\S]*?)\]\]\]/g, (match, content) => {
+                return `<pre><code>${content.trimStart()}</code></pre>`;
+            });;
     }
     function convertToIframes(text) {
         return text.replace(/\(iframe:([^\[\]]+)\[\[([\s\S]*?)\]\]\)/g, (match, attrString, url) => {
