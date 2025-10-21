@@ -434,7 +434,7 @@ aside.sidebar {
 
 .articleMainText p {
     border-left: 5px solid var(--border);
-    padding-left: 5px;
+    padding-left: 1rem;
     margin: 0;
 }
 

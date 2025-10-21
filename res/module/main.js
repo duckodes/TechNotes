@@ -92,6 +92,7 @@ const main = (async () => {
     const topic = document.querySelector('.layout>header');
     async function UpdateTopic(text) {
         topic.textContent = text;
+        document.title = text;
     }
 
     const layout = document.querySelector('.layout');
