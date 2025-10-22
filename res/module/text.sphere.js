@@ -117,7 +117,7 @@ const textSphere = (() => {
             canvas.style.cursor = 'default';
         });
 
-        canvas.addEventListener('click', () => {
+        canvas.addEventListener('click', (e) => {
             for (const item of textPositions) {
                 if (item.alpha < config.visibilityThreshold) continue;
                 ctx.font = `${item.size}px sans-serif`;
@@ -130,7 +130,7 @@ const textSphere = (() => {
                 const top = item.y - textHeight / 2;
                 const bottom = item.y + textHeight / 2;
 
-                if (mouseX >= left && mouseX <= right && mouseY >= top && mouseY <= bottom) {
+                if (e.offsetX >= left && e.offsetX <= right && e.offsetY >= top && e.offsetY <= bottom) {
                     clicked(item.text);
                     break;
                 }
