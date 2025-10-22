@@ -5,6 +5,7 @@ import dateutils from "./date.utils.js";
 import themeutils from "./theme.utils.js";
 import scrollUtils from "./scroll.utils.js";
 import footer from "./footer.js";
+import textSphere from "./text.sphere.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -600,6 +601,8 @@ const main = (async () => {
     }
     // 標籤雲
     let matchedArticles = [];
+    let isRenderTextSphere = false;
+    let textSphereCanvas = document.createElement('canvas');
     function renderTagCloud(articles) {
         articleContainer.innerHTML = '';
         const tagCloud = document.createElement('div');
@@ -634,6 +637,79 @@ const main = (async () => {
         });
         articleContainer.appendChild(tagCloud);
         scrollUtils.margin(articleContainer, -20);
+
+        if (!isRenderTextSphere) {
+            isRenderTextSphere = true;
+            textSphereCanvas.style.width = '100%';
+            textSphereCanvas.style.height = 'auto';
+            textSphereCanvas.style.display = 'block';
+            articleContainer.appendChild(textSphereCanvas);
+            let resizeTimeout;
+            let lastCanvasWidth = 0;
+            window.addEventListener('resize', () => {
+                if (pageSelect !== pageSelectOption.tagCloud) return;
+                if (articleContainer.clientWidth === lastCanvasWidth) return;
+                lastCanvasWidth = articleContainer.clientWidth;
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    textSphereCanvas.remove();
+                    textSphereCanvas = document.createElement('canvas');
+                    textSphereCanvas.style.width = '100%';
+                    textSphereCanvas.style.height = 'auto';
+                    textSphereCanvas.style.display = 'block';
+                    articleContainer.appendChild(textSphereCanvas);
+                    textSphere.init(textSphereCanvas, {
+                        textsHexOnlyRGB: getComputedStyle(document.documentElement)
+                            .getPropertyValue('--accent')
+                            .trim(),
+                        texts: tags,
+                        clicked: (text) => {
+                            tags?.forEach(tag => {
+                                if (text === tag) {
+                                    renderTagArticles(tag, articles);
+                                }
+                            });
+                        },
+                        container: articleContainer
+                    });
+                }, 500);
+            });
+            textSphere.init(textSphereCanvas, {
+                textsHexOnlyRGB: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--accent')
+                    .trim(),
+                texts: tags,
+                clicked: (text) => {
+                    tags?.forEach(tag => {
+                        if (text === tag) {
+                            renderTagArticles(tag, articles);
+                        }
+                    });
+                },
+                container: articleContainer
+            });
+        } else {
+            textSphereCanvas?.remove();
+            textSphereCanvas = document.createElement('canvas');
+            textSphereCanvas.style.width = '100%';
+            textSphereCanvas.style.height = 'auto';
+            textSphereCanvas.style.display = 'block';
+            articleContainer.appendChild(textSphereCanvas);
+            textSphere.init(textSphereCanvas, {
+                textsHexOnlyRGB: getComputedStyle(document.documentElement)
+                    .getPropertyValue('--accent')
+                    .trim(),
+                texts: tags,
+                clicked: (text) => {
+                    tags?.forEach(tag => {
+                        if (text === tag) {
+                            renderTagArticles(tag, articles);
+                        }
+                    });
+                },
+                container: articleContainer
+            });
+        }
     }
     function renderTagArticles(tag, articles, page = 1) {
         const pageSize = 5;
