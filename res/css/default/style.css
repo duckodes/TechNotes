@@ -456,7 +456,7 @@ aside.sidebar {
     display: none;
     align-items: center;
     justify-content: center;
-    transform: scale(0.95);
+    transform: scale(0);
     opacity: 0;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
@@ -467,7 +467,7 @@ aside.sidebar {
 }
 
 .image-preview-container.unactive {
-    transform: scale(0.95);
+    transform: scale(0);
     opacity: 0;
 }
 

@@ -364,9 +364,9 @@ const main = (async () => {
             img.addEventListener('click', () => {
                 previewContainer.classList.remove('active');
                 const ctx = canvas.getContext('2d');
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                canvas.width = img.width;
-                canvas.height = img.height;
                 ctx.drawImage(img, 0, 0);
                 const dataURL = canvas.toDataURL();
                 previewContainer.querySelector('.image-preview').style.backgroundImage = `url(${dataURL})`;
