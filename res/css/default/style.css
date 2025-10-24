@@ -446,6 +446,41 @@ aside.sidebar {
     cursor: pointer;
 }
 
+.image-preview-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100dvw;
+    height: 100dvh;
+    background-color: #00000050;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.95);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.image-preview-container.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.image-preview-container.unactive {
+    transform: scale(0.95);
+    opacity: 0;
+}
+
+.image-preview {
+    width: 98%;
+    aspect-ratio: 16 / 9;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    flex-shrink: 1;
+}
+
 footer {
     text-align: center;
     padding: 1rem;

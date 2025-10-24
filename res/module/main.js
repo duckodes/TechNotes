@@ -250,7 +250,7 @@ const main = (async () => {
         const images = await loadImages(article.images);
         const imageHTML = article.images?.length
             ? `<div class="article-images">${images.map(img =>
-                `<img src="${img.src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
+                `<img src="${img.src}" alt="文章圖片" style="width:100%; border-radius:10px;" crossorigin="anonymous" />`
             ).join('')}</div>`
             : '';
         const convertToText = document.createElement('div');
@@ -292,6 +292,8 @@ const main = (async () => {
                 pre.nextSibling.remove();
             }
         });
+
+        imageMagnifier();
 
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
@@ -303,7 +305,7 @@ const main = (async () => {
 
         const imageHTML = article.images?.length
             ? `<div class="article-images">${article.images.map(src =>
-                `<img src="${src}" alt="文章圖片" style="width:100%; border-radius:10px;" />`
+                `<img src="${src}" alt="文章圖片" style="width:100%; border-radius:10px;" crossorigin="anonymous" />`
             ).join('')}</div>`
             : '';
         const convertToText = document.createElement('div');
@@ -347,11 +349,50 @@ const main = (async () => {
             }
         });
 
+        imageMagnifier();
+
         articleContainer.style.display = 'none';
         articleView.style.display = 'block';
         scrollUtils.margin(articleView, -20);
         codeAdditional();
     }
+    const previewContainer = document.querySelector('.image-preview-container');
+    const canvas = document.createElement('canvas');
+    function imageMagnifier() {
+        articleBody.querySelectorAll('img').forEach(img => {
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', () => {
+                previewContainer.classList.remove('active');
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+                const dataURL = canvas.toDataURL();
+                previewContainer.querySelector('.image-preview').style.backgroundImage = `url(${dataURL})`;
+                previewContainer.style.display = 'flex';
+                setTimeout(() => {
+                    previewContainer.classList.add('active');
+                }, 100);
+            });
+        });
+    }
+    window.addEventListener('scroll', () => {
+        previewContainer.classList.add('unactive');
+        previewContainer.classList.remove('active');
+        setTimeout(() => {
+            previewContainer.classList.remove('unactive');
+            previewContainer.style.display = 'none';
+        }, 500);
+    });
+    window.addEventListener('wheel', () => {
+        previewContainer.classList.add('unactive');
+        previewContainer.classList.remove('active');
+        setTimeout(() => {
+            previewContainer.classList.remove('unactive');
+            previewContainer.style.display = 'none';
+        }, 500);
+    });
     function convertToTable(text) {
         return text.replace(
             /(?:^|\n)(?:(?:[^\n]*\|[^\n]*)\n?){2,}/g,
