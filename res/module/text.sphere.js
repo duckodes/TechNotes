@@ -1,7 +1,10 @@
 const textSphere = (() => {
     function init(canvas, {
-        texts = ['text1', 'text2', 'text3', 'text4', 'text5', 'text6', 'text7', 'text8', 'text9', 'text10',
-            'text11', 'text12', 'text13', 'text14', 'text15', 'text16', 'text17', 'text18', 'text19', 'text20'
+        texts = [
+            "還沒想好", "之後再說", "懶得標", "空空如也", "標籤失蹤",
+            "標籤跑路", "標籤在度假", "標籤未定", "標籤迷路中", "標籤施工中",
+            "標籤暫停中", "標籤待補", "標籤未命名", "標籤在排隊", "標籤在喝咖啡",
+            "標籤放空中", "標籤未上線", "標籤還在想", "標籤正在生成", "標籤還沒醒"
         ],
         textsHexOnlyRGB = '#000000',
         step = 4,
