@@ -712,19 +712,21 @@ const main = (async () => {
                     });
                 }, 500);
             });
-            textSphere.init(textSphereCanvas, {
-                textsHexOnlyRGB: getComputedStyle(document.documentElement)
-                    .getPropertyValue('--accent')
-                    .trim(),
-                texts: tags,
-                clicked: (text) => {
-                    tags?.forEach(tag => {
-                        if (text === tag) {
-                            renderTagArticles(tag, articles);
-                        }
-                    });
-                },
-                container: articleContainer
+            queueMicrotask(() => {
+                textSphere.init(textSphereCanvas, {
+                    textsHexOnlyRGB: getComputedStyle(document.documentElement)
+                        .getPropertyValue('--accent')
+                        .trim(),
+                    texts: tags,
+                    clicked: (text) => {
+                        tags?.forEach(tag => {
+                            if (text === tag) {
+                                renderTagArticles(tag, articles);
+                            }
+                        });
+                    },
+                    container: articleContainer
+                });
             });
         } else {
             textSphereCanvas?.remove();
