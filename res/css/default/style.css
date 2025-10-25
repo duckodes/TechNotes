@@ -456,19 +456,6 @@ aside.sidebar {
     display: none;
     align-items: center;
     justify-content: center;
-    transform: scale(0);
-    opacity: 0;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.image-preview-container.active {
-    transform: scale(1);
-    opacity: 1;
-}
-
-.image-preview-container.unactive {
-    transform: scale(0);
-    opacity: 0;
 }
 
 .image-preview {
@@ -479,6 +466,19 @@ aside.sidebar {
     background-repeat: no-repeat;
     border-radius: 8px;
     flex-shrink: 1;
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.image-preview.active {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.image-preview.unactive {
+    transform: scale(0);
+    opacity: 0;
 }
 
 footer {

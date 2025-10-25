@@ -356,43 +356,41 @@ const main = (async () => {
         scrollUtils.margin(articleView, -20);
         codeAdditional();
     }
-    const previewContainer = document.querySelector('.image-preview-container');
-    const canvas = document.createElement('canvas');
+    const imagePreviewContainer = document.querySelector('.image-preview-container');
+    const imagePreview = imagePreviewContainer.querySelector('.image-preview');
+    const imagePreviewCanvas = document.createElement('canvas');
+    const imagePreviewCtx = imagePreviewCanvas.getContext('2d');
+    const imagePreviewRect = imagePreview.getBoundingClientRect();
+
     function imageMagnifier() {
         articleBody.querySelectorAll('img').forEach(img => {
             img.style.cursor = 'pointer';
             img.addEventListener('click', () => {
-                previewContainer.classList.remove('active');
-                const ctx = canvas.getContext('2d');
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-                const dataURL = canvas.toDataURL();
-                previewContainer.querySelector('.image-preview').style.backgroundImage = `url(${dataURL})`;
-                previewContainer.style.display = 'flex';
-                setTimeout(() => {
-                    previewContainer.classList.add('active');
-                }, 100);
+                imagePreviewCtx.clearRect(0, 0, imagePreviewCanvas.width, imagePreviewCanvas.height);
+                imagePreviewCanvas.width = img.naturalWidth;
+                imagePreviewCanvas.height = img.naturalHeight;
+                imagePreviewCtx.drawImage(img, 0, 0);
+                const dataURL = imagePreviewCanvas.toDataURL();
+                imagePreview.style.backgroundImage = `url(${dataURL})`;
+                imagePreviewContainer.style.display = 'flex';
+                requestAnimationFrame(() => {
+                    imagePreview.classList.add('active');
+                });
+
             });
         });
     }
-    window.addEventListener('scroll', () => {
-        previewContainer.classList.add('unactive');
-        previewContainer.classList.remove('active');
+    window.addEventListener('scroll', scrollImagePreview);
+    window.addEventListener('wheel', scrollImagePreview);
+    function scrollImagePreview() {
+        imagePreview.classList.add('unactive');
+        imagePreview.classList.remove('active');
         setTimeout(() => {
-            previewContainer.classList.remove('unactive');
-            previewContainer.style.display = 'none';
+            imagePreview.classList.remove('unactive');
+            imagePreviewContainer.style.display = '';
+            imagePreview.style.transform = '';
         }, 500);
-    });
-    window.addEventListener('wheel', () => {
-        previewContainer.classList.add('unactive');
-        previewContainer.classList.remove('active');
-        setTimeout(() => {
-            previewContainer.classList.remove('unactive');
-            previewContainer.style.display = 'none';
-        }, 500);
-    });
+    }
     function convertToTable(text) {
         return text.replace(
             /(?:^|\n)(?:(?:[^\n]*\|[^\n]*)\n?){2,}/g,
