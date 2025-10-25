@@ -360,7 +360,6 @@ const main = (async () => {
     const imagePreview = imagePreviewContainer.querySelector('.image-preview');
     const imagePreviewCanvas = document.createElement('canvas');
     const imagePreviewCtx = imagePreviewCanvas.getContext('2d');
-    const imagePreviewRect = imagePreview.getBoundingClientRect();
 
     function imageMagnifier() {
         articleBody.querySelectorAll('img').forEach(img => {
@@ -389,7 +388,7 @@ const main = (async () => {
             imagePreview.classList.remove('unactive');
             imagePreviewContainer.style.display = '';
             imagePreview.style.transform = '';
-        }, 500);
+        }, 200);
     }
     function convertToTable(text) {
         return text.replace(
@@ -734,19 +733,21 @@ const main = (async () => {
             textSphereCanvas.style.height = 'auto';
             textSphereCanvas.style.display = 'block';
             articleContainer.appendChild(textSphereCanvas);
-            textSphere.init(textSphereCanvas, {
-                textsHexOnlyRGB: getComputedStyle(document.documentElement)
-                    .getPropertyValue('--accent')
-                    .trim(),
-                texts: tags,
-                clicked: (text) => {
-                    tags?.forEach(tag => {
-                        if (text === tag) {
-                            renderTagArticles(tag, articles);
-                        }
-                    });
-                },
-                container: articleContainer
+            queueMicrotask(() => {
+                textSphere.init(textSphereCanvas, {
+                    textsHexOnlyRGB: getComputedStyle(document.documentElement)
+                        .getPropertyValue('--accent')
+                        .trim(),
+                    texts: tags,
+                    clicked: (text) => {
+                        tags?.forEach(tag => {
+                            if (text === tag) {
+                                renderTagArticles(tag, articles);
+                            }
+                        });
+                    },
+                    container: articleContainer
+                });
             });
         }
     }
