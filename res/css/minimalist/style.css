@@ -488,11 +488,11 @@ footer {
 pre {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    background-color: #f3f3f3;
+    background-color: var(--code-bg);
     color: var(--text);
     font-family: var(--font-mono);
     font-size: 0.9em;
-    padding: 1rem;
+    padding: 8px 16px;
     border-radius: var(--radius);
     overflow-x: auto;
     contain: inline-size;

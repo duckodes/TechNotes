@@ -10,6 +10,9 @@
     --tag: #aaaa;
     --tag-hover: #aaaa;
     --tag-bg: #333333;
+    --code-bg: #222;
+    --code-top-text: #f1f1f1;
+    --code-checkbox-text: #f1f1f1;
 }
 
 ::-webkit-scrollbar {
@@ -40,11 +43,11 @@
 }
 
 pre {
-    background-color: #222;
+    background-color: var(--code-bg);
     color: #e2e2e2;
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.95em;
-    padding: 1.5rem;
+    padding: 8px 16px;
     border-radius: var(--radius);
     border: 1px solid #444;
     width: 100%;

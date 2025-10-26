@@ -10,6 +10,9 @@
     --tag: #aaaa;
     --tag-hover: #576072;
     --tag-bg: #2a2f3e;
+    --code-bg: #0d111a;
+    --code-top-text: #d0e0ff;
+    --code-checkbox-text: #777777;
 }
 
 ::-webkit-scrollbar {
@@ -42,15 +45,14 @@
 pre {
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    background-color: #0d111a;
+    background-color: var(--code-bg);
     color: #00ffe7;
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     font-size: 0.95em;
-    padding: 16px;
+    padding: 8px 16px;
     border-radius: var(--radius);
     border: 1px solid #00ffe722;
     box-shadow: var(--shadow);
-    white-space: pre-wrap;
     overflow-x: auto;
     display: block;
     contain: inline-size;

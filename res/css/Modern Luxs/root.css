@@ -1,70 +1,74 @@
 :root {
-  --bg: #fdfcfb;
-  --card-bg: #ffffff;
-  --accent: #c6a972;
-  --text: #2c2c2c;
-  --border: #e0e0e0;
-  --radius: 12px;
-  --tag: #7e7e7e;
-  --tag-hover: #7e7e7e;
-  --tag-bg: #e0e0e0;
+    --bg: #fdfcfb;
+    --card-bg: #ffffff;
+    --accent: #c6a972;
+    --text: #2c2c2c;
+    --border: #e0e0e0;
+    --radius: 12px;
+    --tag: #7e7e7e;
+    --tag-hover: #7e7e7e;
+    --tag-bg: #e0e0e0;
+    --code-bg: #1e1e1e;
+    --code-top-text: #ffffff;
+    --code-checkbox-text: #252525;
+    --code-checkbox-text: #252525;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c6a972;
+    background: #c6a972;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b08b4f;
+    background: #b08b4f;
 }
 
 ::-webkit-scrollbar-corner {
-  background-color: var(--bg);
+    background-color: var(--bg);
 }
 
 ::selection {
-  color: white;
-  background-color: var(--accent);
+    color: white;
+    background-color: var(--accent);
 }
 
 * {
-  box-sizing: border-box;
-  font-family: 'Playfair Display', 'Segoe UI', serif;
+    box-sizing: border-box;
+    font-family: 'Playfair Display', 'Segoe UI', serif;
 }
 
 pre {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  background-color: #1e1e1e;
-  color: #ffffff;
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
-  font-size: 0.95em;
-  padding: 16px;
-  border-radius: 6px;
-  border: 1px solid #333;
-  width: 100%;
-  box-sizing: border-box;
-  white-space: pre;
-  overflow-x: auto;
-  display: block;
-  contain: inline-size;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background-color: var(--code-bg);
+    color: #ffffff;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 0.95em;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    width: 100%;
+    box-sizing: border-box;
+    white-space: pre;
+    overflow-x: auto;
+    display: block;
+    contain: inline-size;
 }
 
 pre code {
-  background: none;
-  color: inherit;
-  padding: 0;
-  border: none;
+    background: none;
+    color: inherit;
+    padding: 0;
+    border: none;
 }
 
 pre code .no-select {
-  user-select: none;
-  -moz-user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }

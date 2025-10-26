@@ -18,6 +18,10 @@
     --tag: #aaaa;
     --tag-hover: #aaaa;
     --tag-bg: #e5e5e5;
+
+    --code-bg: #f3f3f3;
+    --code-top-text: #2e2e2e;
+    --code-checkbox-text: #2e2e2e;
 }
 
 * {

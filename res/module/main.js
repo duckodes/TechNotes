@@ -844,15 +844,8 @@ const main = (async () => {
 
             // Create a checkbox
             const checkbox = document.createElement('input');
+            checkbox.className = 'checkBox';
             checkbox.type = 'checkbox';
-            checkbox.style.position = 'absolute';
-            checkbox.style.top = '-15px';
-            checkbox.style.left = '-15px';
-            checkbox.style.appearance = 'none';
-            checkbox.style.backgroundColor = '#333';
-            checkbox.style.borderRadius = '100%';
-            checkbox.style.width = '10px';
-            checkbox.style.height = '10px';
             checkbox.addEventListener('change', () => {
                 if (checkbox.checked) {
                     checkbox.style.backgroundColor = '#999';
@@ -865,10 +858,66 @@ const main = (async () => {
                 }
             });
 
+            const topBox = document.createElement('div');
+            topBox.className = 'topBox';
+            const copyBox = document.createElement('div');
+            copyBox.className = 'copyBox';
+            const copySVG = '<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="icon-sm" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>';
+            copyBox.innerHTML = copySVG + ' copy';
+            copyBox.addEventListener('click', () => {
+                navigator.clipboard.writeText(getFilteredTextContent(codeBlock))
+                    .then(() => {
+                        if (getDirectChildText(copyBox) === 'copy') {
+                            updateDirectText(copyBox, ' recopy');
+                        } else {
+                            updateDirectText(copyBox, ' copy');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('error:', err);
+                    });
+            });
+            function updateDirectText(element, newText) {
+                element.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        node.textContent = newText;
+                    }
+                });
+            }
+            function getDirectChildText(element) {
+                if (!element) return '';
+
+                let text = '';
+                element.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        text += node.textContent;
+                    }
+                });
+
+                return text.trim();
+            }
+            function getFilteredTextContent(element) {
+                if (!element) return '';
+
+                // 深層複製 element 避免修改原始 DOM
+                const clone = element.cloneNode(true);
+                clone.querySelectorAll('.codenum-atv').forEach(el => el.remove());
+                return clone.textContent;
+            }
+
+
+            const languageBox = document.createElement('div');
+            languageBox.textContent = codeBlock.className.replace('language-', '');
+
             // Wrap the code block with the wrapper
             codeBlock.parentNode.insertBefore(wrapper, codeBlock);
-            wrapper.appendChild(checkbox);
+            topBox.appendChild(copyBox);
+            topBox.appendChild(languageBox);
+            topBox.appendChild(checkbox);
+
             wrapper.appendChild(codeBlock);
+
+            wrapper.parentNode.insertBefore(topBox, wrapper);
         });
 
         function addCodeNum(element) {

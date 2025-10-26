@@ -1,0 +1,56 @@
+.topBox {
+    font-family: monospace;
+    cursor: pointer;
+    color: var(--code-top-text);
+    background-color: var(--code-bg);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.copyBox {
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+}
+
+.checkBox {
+    appearance: none;
+    border-radius: 100%;
+}
+
+.checkBox::after {
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: var(--border);
+    content: '↵';
+    color: var(--code-checkbox-text);
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+    padding: 2px;
+    background-color: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: inset 0 0 0 4px var(--border);
+}
+
+.checkBox:checked::after {
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background-color: var(--border);
+    content: '⇥';
+    color: var(--code-checkbox-text);
+    font-size: 15px;
+    text-align: center;
+    padding: 2px;
+    border: 2px solid var(--accent);
+}
