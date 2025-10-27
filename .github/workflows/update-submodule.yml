@@ -16,11 +16,17 @@ jobs:
           submodules: recursive
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update submodule to latest commit
+      - name: Init submodule as Git repo
+        run: git submodule update --init --recursive
+
+      - name: Force update submodule to latest commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git submodule update --remote --rebase
-          git add .
-          git commit -m "chore: update submodule to latest version" || echo "No changes to commit"
+          cd submodule/TechNotesSitemap
+          git fetch
+          git checkout origin/main --force
+          cd ../
+          git add submodule/TechNotesSitemap
+          git commit -m "chore: force update submodule to latest commit" || echo "No changes"
           git push
