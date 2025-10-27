@@ -5,13 +5,29 @@
     --text: #e0faff;
     --border: rgba(255, 255, 255, 0.15);
     --radius: 16px;
+
     --tag: #aaaa;
     --tag-hover: #778da9;
     --tag-bg: rgba(255, 255, 255, 0.15);
+
     --code-bg: #1b263b;
     --code-top-text: #e0faff;
     --code-checkbox-text: #1b263b;
     --code-num: #e0faff80;
+    
+    --code-csharp-1: #569cd6;
+    --code-csharp-2: #d8a0df;
+    --code-csharp-3: #86c691;
+
+    --code-javascript-1: #439CCB;
+    --code-javascript-2: #C586C0;
+    --code-javascript-3: #9CDCFE;
+    --code-javascript-4: #4EC9B0;
+
+    --code-shared-string: #ce9178;
+    --code-shared-comment: #57a64a;
+    --code-shared-number: #b5cea8;
+    --code-shared-class-method: #F0F0AA;
 }
 
 ::-webkit-scrollbar {

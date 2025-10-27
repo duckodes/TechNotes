@@ -16,6 +16,20 @@
     --code-top-text: #ecf0f1;
     --code-checkbox-text: #ecf0f1;
     --code-num: #596d81;
+    
+    --code-csharp-1: #569cd6;
+    --code-csharp-2: #d8a0df;
+    --code-csharp-3: #86c691;
+
+    --code-javascript-1: #439CCB;
+    --code-javascript-2: #C586C0;
+    --code-javascript-3: #9CDCFE;
+    --code-javascript-4: #4EC9B0;
+
+    --code-shared-string: #ce9178;
+    --code-shared-comment: #57a64a;
+    --code-shared-number: #b5cea8;
+    --code-shared-class-method: #F0F0AA;
 }
 
 ::-webkit-scrollbar {

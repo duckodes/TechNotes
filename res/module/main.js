@@ -944,17 +944,24 @@ const main = (async () => {
         ];
         const keywordStyles = {
             'language-csharp': [
-                { keywords: csKeywords[0], style: 'color: #569cd6;font-weight:bold;' },
-                { keywords: csKeywords[1], style: 'color: #d8a0df;font-weight:bold' },
-                { keywords: csKeywords[2], style: 'color: #86c691;font-weight:bold' }
+                { keywords: csKeywords[0], style: 'color: var(--code-csharp-1);font-weight:bold;' },
+                { keywords: csKeywords[1], style: 'color: var(--code-csharp-2);font-weight:bold' },
+                { keywords: csKeywords[2], style: 'color: var(--code-csharp-3);font-weight:bold' }
             ],
             'language-javascript': [
-                { keywords: jsKeywords[0], style: 'color: #439CCB;font-weight:bold' },
-                { keywords: jsKeywords[1], style: 'color: #C586C0;font-weight:bold' },
-                { keywords: jsKeywords[2], style: 'color: #9CDCFE;font-weight:bold' },
-                { keywords: jsKeywords[3], style: 'color: #4EC9B0;font-weight:bold' }
+                { keywords: jsKeywords[0], style: 'color: var(--code-javascript-1);font-weight:bold' },
+                { keywords: jsKeywords[1], style: 'color: var(--code-javascript-2);font-weight:bold' },
+                { keywords: jsKeywords[2], style: 'color: var(--code-javascript-3);font-weight:bold' },
+                { keywords: jsKeywords[3], style: 'color: var(--code-javascript-4);font-weight:bold' }
             ]
         };
+        const stringColor = getRootVar('--code-shared-string');
+        const commentColor = getRootVar('--code-shared-comment');
+        const numberColor = getRootVar('--code-shared-number');
+        const classMethodColor = getRootVar('--code-shared-class-method');
+        function getRootVar(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
 
         codeBlocks.forEach(codeBlock => {
             const language = codeBlock.className;
@@ -963,24 +970,24 @@ const main = (async () => {
             const raw = codeBlock.innerText;
             const highlighted = raw
                 // 字串高亮
-                .replace(/`(?:\\[\s\S]|[^\\`])*`/g, match => `<span style="color:#ce9178;">${match}</span>`)
-                .replace(/"(?:\\.|[^"\\])*"/g, match => `<span style="color:#ce9178;">${match}</span>`)
-                .replace(/'(?:\\.|[^'\\])*'/g, match => `<span style="color:#ce9178;">${match}</span>`)
+                .replace(/`(?:\\[\s\S]|[^\\`])*`/g, match => `<span style="color: ${stringColor};">${match}</span>`)
+                .replace(/"(?:\\.|[^"\\])*"/g, match => `<span style="color: ${stringColor};">${match}</span>`)
+                .replace(/'(?:\\.|[^'\\])*'/g, match => `<span style="color: ${stringColor};">${match}</span>`)
                 // 註解
-                .replace(/\/\/.*/g, match => `<span style="color: #57a64a;">${match}</span>`)
+                .replace(/\/\/.*/g, match => `<span style="color: ${commentColor};">${match}</span>`)
                 .replace(/\/\*[\s\S]*?\*\//g, (match) => {
-                    return `<span style="color: #57a64a;">${match}</span>`;
-                })
-                .replace(/\b\d+(\.\d+)?\b/g, match => {
-                    return `<span style="color: #b5cea8;">${match}</span>`;
+                    return `<span style="color: ${commentColor};">${match}</span>`;
                 })
                 // 數字
+                .replace(/\b\d+(\.\d+)?\b/g, match => {
+                    return `<span style="color: ${numberColor};">${match}</span>`;
+                })
                 .replace(/\b0x[0-9a-fA-F]+\b/g, match => {
-                    return `<span style="color: #b5cea8;">${match}</span>`;
+                    return `<span style="color: ${numberColor};">${match}</span>`;
                 })
                 // 類別.方法
                 .replace(/\.([a-zA-Z]+)/g, (match, p1) => {
-                    return `.<span style="color: #F0F0AA;font-weight:bold;">${p1}</span>`;
+                    return `.<span style="color: ${classMethodColor};font-weight:bold;">${p1}</span>`;
                 })
                 // KeyWords
                 .replace(/\b(\w+)\b/g, (match) => {

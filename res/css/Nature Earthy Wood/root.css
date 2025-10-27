@@ -6,13 +6,29 @@
     --border: #d9ccc1;
     --radius: 12px;
     --muted: #8b7e74;
+
     --tag: #8b7e74;
     --tag-hover: #8b7e74;
     --tag-bg: #d9ccc1;
+
     --code-bg: #f1ede8;
     --code-top-text: #3e3e3e;
     --code-checkbox-text: #3e3e3e;
     --code-num: #afc09c;
+    
+    --code-csharp-1: #d8a0df;
+    --code-csharp-2: #569cd6;
+    --code-csharp-3: #86c691;
+
+    --code-javascript-1: #C586C0;
+    --code-javascript-2: #439CCB;
+    --code-javascript-3: #9CDCFE;
+    --code-javascript-4: #4EC9B0;
+
+    --code-shared-string: #ce9178;
+    --code-shared-comment: #57a64a;
+    --code-shared-number: #a07517;
+    --code-shared-class-method: #4ec9b0;
 }
 
 ::-webkit-scrollbar {
