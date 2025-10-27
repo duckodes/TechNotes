@@ -8,10 +8,10 @@
     --tag: #7e7e7e;
     --tag-hover: #7e7e7e;
     --tag-bg: #e0e0e0;
-    --code-bg: #1e1e1e;
-    --code-top-text: #ffffff;
+    --code-bg: #fdfcfb;
+    --code-top-text: #2c2c2c;
     --code-checkbox-text: #252525;
-    --code-checkbox-text: #252525;
+    --code-num: #c0c0c0;
 }
 
 ::-webkit-scrollbar {
@@ -39,36 +39,4 @@
 * {
     box-sizing: border-box;
     font-family: 'Playfair Display', 'Segoe UI', serif;
-}
-
-pre {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    background-color: var(--code-bg);
-    color: #ffffff;
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 0.95em;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: pre;
-    overflow-x: auto;
-    display: block;
-    contain: inline-size;
-}
-
-pre code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    border: none;
-}
-
-pre code .no-select {
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
 }

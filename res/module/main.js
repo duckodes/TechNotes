@@ -837,12 +837,9 @@ const main = (async () => {
         const codeBlocks = document.querySelectorAll('code');
 
         codeBlocks.forEach((codeBlock, index) => {
-            // Create a wrapper div for the checkbox and code block
-            const wrapper = document.createElement('div');
-            wrapper.style.position = 'relative';
-            wrapper.style.display = 'inline-block';
+            const codeWrapper = document.createElement('div');
+            codeWrapper.className = 'codeWrapper';
 
-            // Create a checkbox
             const checkbox = document.createElement('input');
             checkbox.className = 'checkBox';
             checkbox.type = 'checkbox';
@@ -901,7 +898,7 @@ const main = (async () => {
 
                 // 深層複製 element 避免修改原始 DOM
                 const clone = element.cloneNode(true);
-                clone.querySelectorAll('.codenum-atv').forEach(el => el.remove());
+                clone.querySelectorAll('.codenum').forEach(el => el.remove());
                 return clone.textContent;
             }
 
@@ -909,15 +906,14 @@ const main = (async () => {
             const languageBox = document.createElement('div');
             languageBox.textContent = codeBlock.className.replace('language-', '');
 
-            // Wrap the code block with the wrapper
-            codeBlock.parentNode.insertBefore(wrapper, codeBlock);
+            codeBlock.parentNode.insertBefore(codeWrapper, codeBlock);
             topBox.appendChild(copyBox);
             topBox.appendChild(languageBox);
             topBox.appendChild(checkbox);
 
-            wrapper.appendChild(codeBlock);
+            codeWrapper.appendChild(codeBlock);
 
-            wrapper.parentNode.insertBefore(topBox, wrapper);
+            codeWrapper.parentNode.insertBefore(topBox, codeWrapper);
         });
 
         function addCodeNum(element) {
@@ -925,7 +921,7 @@ const main = (async () => {
             const lines = codeText.split('\n');
             let numberedCode = '';
             for (var i = 0; i < lines.length; i++) {
-                numberedCode += `<div class="no-select codenum-atv" contenteditable="false" style="display: inline-block;color: #555;">${(i + 1).toString().padEnd(lines.length.toString().length, ' ')} </div>${lines[i]}`;
+                numberedCode += `<div class="codenum no-select" contenteditable="false">${(i + 1).toString().padEnd(lines.length.toString().length, ' ')} </div>${lines[i]}`;
 
                 if (i < lines.length - 1) {
                     numberedCode += '\n';

@@ -485,26 +485,6 @@ footer {
     color: var(--text-muted);
 }
 
-pre {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    background-color: var(--code-bg);
-    color: var(--text);
-    font-family: var(--font-mono);
-    font-size: 0.9em;
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    overflow-x: auto;
-    contain: inline-size;
-}
-
-pre code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    border: none;
-}
-
 @media (max-width: 768px) {
     .content {
         grid-template-columns: 1fr;

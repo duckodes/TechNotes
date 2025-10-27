@@ -7,12 +7,15 @@
     --highlight: #16a085;
     --shadow: rgba(0, 0, 0, 0.4);
     --radius: 12px;
+
     --tag: #aaaa;
     --tag-hover: #aaaa;
     --tag-bg: #34495e;
+    
     --code-bg: #2c3e50;
     --code-top-text: #ecf0f1;
     --code-checkbox-text: #ecf0f1;
+    --code-num: #596d81;
 }
 
 ::-webkit-scrollbar {
@@ -40,19 +43,4 @@
 
 * {
     box-sizing: border-box;
-}
-
-pre {
-    background-color: var(--code-bg);
-    color: #ecf0f1;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    width: 100%;
-    overflow-x: auto;
-    white-space: pre;
-    display: block;
-    contain: inline-size;
 }

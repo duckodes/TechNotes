@@ -12,6 +12,7 @@
     --code-bg: #f5f5f5;
     --code-top-text: #2e2e2e;
     --code-checkbox-text: #3b3b3b;
+    --code-num: #b1b1b1;
 }
 
 ::-webkit-scrollbar {
@@ -38,30 +39,4 @@
 
 * {
     box-sizing: border-box;
-}
-
-pre {
-    background-color: var(--code-bg);
-    color: #333;
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 0.95em;
-    padding: 8px 16px;
-    border-radius: var(--radius);
-    border: 1px solid #ddd;
-    width: 100%;
-    overflow-x: auto;
-    white-space: pre;
-    display: block;
-    contain: inline-size;
-}
-
-pre code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    border: none;
-}
-
-pre code .no-select {
-    user-select: none;
 }

@@ -5,12 +5,15 @@
     --text: #e0e0e0;
     --border: #2c2f36;
     --radius: 10px;
+    
     --tag: #aaaa;
     --tag-hover: #00bcd4;
     --tag-bg: #2c2f36;
+
     --code-bg: #1e1e1e;
     --code-top-text: #e0e0e0;
     --code-checkbox-text: #e0e0e0;
+    --code-num: #555;
 }
 
 ::-webkit-scrollbar {
@@ -37,36 +40,4 @@
 
 * {
     box-sizing: border-box;
-}
-
-pre {
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-    background-color: var(--code-bg);
-    color: #ffffff;
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-    font-size: 0.95em;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #333;
-    width: 100%;
-    box-sizing: border-box;
-    white-space: pre;
-    overflow-x: auto;
-    display: block;
-    contain: inline-size;
-}
-
-pre code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    border: none;
-}
-
-pre code .no-select {
-    user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
 }
