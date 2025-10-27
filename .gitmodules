@@ -1,0 +1,3 @@
+[submodule "submodule/TechNotesSitemap"]
+	path = submodule/TechNotesSitemap
+	url = https://github.com/duckodes/TechNotesSitemap.git

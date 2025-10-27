@@ -1,0 +1,26 @@
+name: Auto Update Submodule
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # 每天凌晨 3 點執行（UTC）
+  workflow_dispatch:      # 允許手動觸發
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main repo with submodules
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update submodule to latest commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git submodule update --remote --merge
+          git add .
+          git commit -m "chore: update submodule to latest version" || echo "No changes to commit"
+          git push
