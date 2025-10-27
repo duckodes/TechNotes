@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main repo with submodules
+      - name: Checkout main repo without submodules
         uses: actions/checkout@v3
         with:
-          submodules: false  # 不要自動拉 submodule，改手動處理
+          submodules: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Init submodule manually
@@ -21,10 +21,14 @@ jobs:
           git submodule init
           git submodule update --remote --force
 
-      - name: Commit updated submodule pointer
+      - name: Force copy sitemap.xml from submodule to root
+        run: |
+          cp -f submodule/TechNotesSitemap/TechNotesSitemap.xml sitemap.xml
+
+      - name: Commit updated submodule pointer and sitemap
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add submodule/TechNotesSitemap
-          git commit -m "chore: update submodule to latest commit" || echo "No changes"
+          git add submodule/TechNotesSitemap sitemap.xml
+          git commit -m "chore: update submodule and sitemap.xml" || echo "No changes"
           git push
