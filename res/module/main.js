@@ -425,7 +425,7 @@ const main = (async () => {
     }
     function convertToImages(text) {
         return text.replace(/\[img:([^\[\]]+)\[\[([\s\S]*?)\]\]\]/g, (match, src, alt) => {
-            return `<img src="${src.trim()}" alt="${alt.trim()}" loading="lazy" />`;
+            return `<img src="${src.trim()}" alt="${alt.trim()}" loading="lazy" crossorigin="anonymous" />`;
         });
     }
     function convertToHeadings(text) {
