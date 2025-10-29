@@ -1,11 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+import { getDatabase, ref, push, get, remove, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 import fetcher from "./fetcher.js";
 import dateutils from "./date.utils.js";
 import themeutils from "./theme.utils.js";
 import scrollUtils from "./scroll.utils.js";
 import footer from "./footer.js";
 import textSphere from "./text.sphere.js";
+import comment from "./comment.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -130,7 +131,7 @@ const main = (async () => {
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
-        await waitShowArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')]);
+        await waitShowArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')], urlSearchParams.get('category'));
         window.parent.postMessage({
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
             height: articleView.scrollHeight
@@ -189,7 +190,7 @@ const main = (async () => {
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
 
-        articles[category].forEach(article => {
+        articles[category].forEach((article, index) => {
             const card = document.createElement('div');
             card.className = 'card';
 
@@ -224,7 +225,7 @@ const main = (async () => {
             card.appendChild(date);
             card.appendChild(tagContainer);
 
-            card.onclick = () => showArticle(article);
+            card.onclick = () => showArticle(article, category, index);
             articleContainer.appendChild(card);
 
             scrollUtils.margin(articleContainer, -20);
@@ -244,7 +245,7 @@ const main = (async () => {
 
         return Promise.all(loadPromises);
     }
-    async function waitShowArticle(article) {
+    async function waitShowArticle(article, category) {
         articleTitle.innerHTML = article.title;
 
         const images = await loadImages(article.images);
@@ -299,8 +300,27 @@ const main = (async () => {
         articleView.style.display = 'block';
         scrollUtils.margin(articleView, -20);
         codeAdditional();
+
+        const allowComments = await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/allowcomments`));
+        if (allowComments) {
+            comment.render(articleBody, async (name, message) => {
+                const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`), { name, message });
+                return true;
+            });
+            loadComments(dataKey, category);
+            async function loadComments(dataKey, category) {
+                const snapshot = await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`));
+
+                if (snapshot.exists()) {
+                    const comments = snapshot.val();
+                    Object.entries(comments).forEach(([id, { name, message }]) => {
+                        comment.createComment(name, message);
+                    });
+                }
+            }
+        }
     }
-    function showArticle(article) {
+    function showArticle(article, category, index) {
         articleTitle.innerHTML = article.title;
 
         const imageHTML = article.images?.length
@@ -355,6 +375,68 @@ const main = (async () => {
         articleView.style.display = 'block';
         scrollUtils.margin(articleView, -20);
         codeAdditional();
+
+        get(ref(database, `technotes/data/${dataKey}/${category}/${index}/allowcomments`)).then(snapshot => {
+            const allowComments = snapshot.val();
+            if (!allowComments) return;
+            comment.render(articleBody, async (name, message, commentElement) => {
+                const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`), { name, message });
+                const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                commentKeys.push(newComment.key);
+                localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
+                if (deleteID().includes(newComment.key)) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '刪除';
+                    deleteButton.addEventListener('click', () => {
+                        deleteComment(dataKey, category, newComment.key, commentElement);
+                    });
+                    commentElement.querySelector('p').appendChild(deleteButton);
+                }
+                return true;
+            });
+            loadComments(dataKey, category);
+            async function loadComments(dataKey, category) {
+                const snapshot = await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`));
+
+                if (snapshot.exists()) {
+                    const comments = snapshot.val();
+                    Object.entries(comments).forEach(([id, { name, message }]) => {
+                        const commentElement = comment.createComment(name, message);
+                        if (deleteID().includes(id)) {
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = '刪除';
+                            deleteButton.addEventListener('click', () => {
+                                deleteComment(dataKey, category, id, commentElement);
+                            });
+                            commentElement.querySelector('p').appendChild(deleteButton);
+                        }
+                    });
+                }
+            }
+            function deleteID() {
+                const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                return commentKeys;
+            }
+            async function deleteComment(uid, category, commentId, commentElement) {
+                const commentKeys = deleteID();
+                if (commentKeys.includes(commentId)) {
+                    await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}`));
+
+                    // 從 localStorage 移除該 ID
+                    const updatedIds = commentKeys.filter(id => id !== commentId);
+                    if (updatedIds.length === 0) {
+                        localStorage.removeItem("commentKeys");
+                    } else {
+                        localStorage.setItem("commentKeys", JSON.stringify(updatedIds));
+                    }
+                    commentElement.remove();
+
+                    console.log("已刪除留言：", commentId);
+                } else {
+                    console.warn("無權刪除這筆留言，因為不在 localStorage 中");
+                }
+            }
+        });
     }
     const imagePreviewContainer = document.querySelector('.image-preview-container');
     const imagePreview = imagePreviewContainer.querySelector('.image-preview');
@@ -554,7 +636,11 @@ const main = (async () => {
 
         for (const [key, value] of Object.entries(articles)) {
             if (Array.isArray(value)) {
-                allArticles.push(...value);
+                const enriched = value.map(item => ({
+                    ...item,
+                    category: key
+                }));
+                allArticles.push(...enriched);
             }
         }
 
@@ -564,7 +650,7 @@ const main = (async () => {
         const insertedYears = new Set();
         allArticles
             .sort((a, b) => b.date - a.date)
-            .forEach(article => {
+            .forEach((article, index) => {
                 const year = new Date(article.date).getFullYear();
                 if (!insertedYears.has(year)) {
                     const yearlyDivision = document.createElement('div');
@@ -630,7 +716,7 @@ const main = (async () => {
                 card.appendChild(bottomLine);
                 card.appendChild(tagContainer);
                 card.appendChild(h5);
-                card.onclick = () => showArticle(article);
+                card.onclick = () => showArticle(article, article.category, index);
 
                 wrapper.appendChild(card);
                 articleContainer.appendChild(wrapper);
@@ -760,10 +846,13 @@ const main = (async () => {
         const pageSize = 5;
         let matchedArticles = [];
 
-        Object.values(articles).forEach(articleList => {
+        Object.entries(articles).forEach(([key, articleList]) => {
             articleList.forEach(article => {
                 if (article.tags?.includes(tag)) {
-                    matchedArticles.push(article);
+                    matchedArticles.push({
+                        ...article,
+                        category: key
+                    });
                 }
             });
         });
@@ -783,11 +872,11 @@ const main = (async () => {
         tagCloudArticleTitle.textContent = `${tag} – ${page}/${totalPages}`;
         tagCloudArticleContainer.appendChild(tagCloudArticleTitle);
 
-        pagedArticles.forEach(article => {
+        pagedArticles.forEach((article, index) => {
             const tagCloudArticle = document.createElement('div');
             tagCloudArticle.className = 'tagCloudArticle';
             tagCloudArticle.innerHTML = `${article.title}`;
-            tagCloudArticle.onclick = () => showArticle(article);
+            tagCloudArticle.onclick = () => showArticle(article, article.category, index);
 
             const tagCloudDate = document.createElement('div');
             tagCloudDate.className = 'tagCloudDate';
@@ -1083,7 +1172,7 @@ const main = (async () => {
 
             for (const category in articlesData) {
                 const articles = articlesData[category];
-                articles.forEach(article => {
+                articles.forEach((article, index) => {
 
                     if (stripHTML(dateutils.ToDateTime(article.date)).toLowerCase().includes(keyword)
                         || stripHTML(article.content).toLowerCase().includes(keyword)
@@ -1091,6 +1180,7 @@ const main = (async () => {
                         || stripHTML(article.title).toLowerCase().includes(keyword)) {
 
                         matchedArticles.push({
+                            index,
                             category,
                             content: highlight(article.content, keyword),
                             summary: highlight(article.summary, keyword),
@@ -1205,7 +1295,7 @@ const main = (async () => {
                         articleNoneHighlight.content = removeMarkTags(articleNoneHighlight.content);
                         articleNoneHighlight.summary = removeMarkTags(articleNoneHighlight.summary);
                         articleNoneHighlight.title = removeMarkTags(articleNoneHighlight.title);
-                        showArticle(articleNoneHighlight);
+                        showArticle(articleNoneHighlight, article.category, article.index);
                         resultContainer.innerHTML = '';
                         scrollUtils.margin(articleView, -20);
                     }
