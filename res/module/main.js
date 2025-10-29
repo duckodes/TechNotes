@@ -131,7 +131,7 @@ const main = (async () => {
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
         articleBackButton.style.display = 'none';
-        await waitShowArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')], urlSearchParams.get('category'));
+        await waitShowArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')], urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
         window.parent.postMessage({
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
             height: articleView.scrollHeight
@@ -245,7 +245,7 @@ const main = (async () => {
 
         return Promise.all(loadPromises);
     }
-    async function waitShowArticle(article, category) {
+    async function waitShowArticle(article, category, index) {
         articleTitle.innerHTML = article.title;
 
         const images = await loadImages(article.images);
