@@ -301,10 +301,21 @@ const main = (async () => {
         scrollUtils.margin(articleView, -20);
         codeAdditional();
 
-        const allowComments = await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/allowcomments`));
+        const allowComments = (await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/allowcomments`))).val();
         if (allowComments) {
-            comment.render(articleBody, async (name, message) => {
+            comment.render(articleBody, async (name, message, commentElement) => {
                 const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`), { name, message });
+                const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                commentKeys.push(newComment.key);
+                localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
+                if (deleteID().includes(newComment.key)) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '刪除';
+                    deleteButton.addEventListener('click', () => {
+                        deleteComment(dataKey, category, newComment.key, commentElement);
+                    });
+                    commentElement.querySelector('p').appendChild(deleteButton);
+                }
                 return true;
             });
             loadComments(dataKey, category);
@@ -314,8 +325,39 @@ const main = (async () => {
                 if (snapshot.exists()) {
                     const comments = snapshot.val();
                     Object.entries(comments).forEach(([id, { name, message }]) => {
-                        comment.createComment(name, message);
+                        const commentElement = comment.createComment(name, message);
+                        if (deleteID().includes(id)) {
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = '刪除';
+                            deleteButton.addEventListener('click', () => {
+                                deleteComment(dataKey, category, id, commentElement);
+                            });
+                            commentElement.querySelector('p').appendChild(deleteButton);
+                        }
                     });
+                }
+            }
+            function deleteID() {
+                const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                return commentKeys;
+            }
+            async function deleteComment(uid, category, commentId, commentElement) {
+                const commentKeys = deleteID();
+                if (commentKeys.includes(commentId)) {
+                    await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}`));
+
+                    // 從 localStorage 移除該 ID
+                    const updatedIds = commentKeys.filter(id => id !== commentId);
+                    if (updatedIds.length === 0) {
+                        localStorage.removeItem("commentKeys");
+                    } else {
+                        localStorage.setItem("commentKeys", JSON.stringify(updatedIds));
+                    }
+                    commentElement.remove();
+
+                    console.log("已刪除留言：", commentId);
+                } else {
+                    console.warn("無權刪除這筆留言，因為不在 localStorage 中");
                 }
             }
         }
