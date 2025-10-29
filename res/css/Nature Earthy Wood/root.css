@@ -29,6 +29,9 @@
     --code-shared-comment: #57a64a;
     --code-shared-number: #a07517;
     --code-shared-class-method: #4ec9b0;
+
+    --comments-text: #3e3e3e;
+    --comments-button-text: #f9f5f1;
 }
 
 ::-webkit-scrollbar {
