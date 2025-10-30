@@ -7,6 +7,7 @@ import scrollUtils from "./scroll.utils.js";
 import footer from "./footer.js";
 import textSphere from "./text.sphere.js";
 import comment from "./comment.js";
+import dagreUtils from "./dagre.utils.js";
 
 const main = (async () => {
     const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
@@ -257,6 +258,7 @@ const main = (async () => {
         const convertToText = document.createElement('div');
         convertToText.innerHTML = article.content;
         article.content = convertToText.textContent;
+        article.content = convertDagreSyntax(article.content);
         article.content = convertToTable(article.content);
         article.content = convertToLinksNewTab(article.content);
         article.content = convertToLinks(article.content);
@@ -374,6 +376,7 @@ const main = (async () => {
         convertToText.innerHTML = article.content;
         article.content = convertToText.textContent;
 
+        article.content = convertDagreSyntax(article.content);
         article.content = convertToTable(article.content);
         article.content = convertToLinksNewTab(article.content);
         article.content = convertToLinks(article.content);
@@ -660,6 +663,54 @@ const main = (async () => {
         }
 
         return parseBlock(text.trim());
+    }
+    function convertDagreSyntax(text) {
+        console.log('轉換 dagre 語法中...');
+
+        const defaultOptions = {
+            parent: 'document.body',
+            dir: 'LR',
+            nodePadding: 20,
+            nodefontSize: 14,
+            nodeBackground: 'none',
+            nodeStroke: '#aaa',
+            nodeStrokeWidth: 1,
+            nodeRadius: 5,
+            nodeTextColor: '#aaa',
+            arrowColor: '#ddd',
+            arrowWidth: 2,
+            arrowSize: 10,
+            arrowStartOffset: 0,
+            arrowEndOffset: 0,
+            marginX: 50,
+            marginY: 50
+        };
+
+        return text.replace(/\[dagre(?::([^\[\]]+))?\[\[([\s\S]*?)\]\]\]/g, (match, optionString = '', rawArg) => {
+            // 自訂語法：{a, b} → { from: "a", to: "b" }
+            const pairs = [...rawArg.matchAll(/\{([^,{}]+)\s*,\s*([^,{}]+)\}/g)];
+            const transitions = pairs.map(([_, from, to]) => ({
+                from: from.trim(),
+                to: to.trim()
+            }));
+
+            const options = { ...defaultOptions };
+            if (optionString) {
+                optionString.split(',').forEach(pair => {
+                    const [key, value] = pair.split(':');
+                    if (key && value) {
+                        const parsedValue = isNaN(value) ? value.trim() : Number(value);
+                        options[key.trim()] = parsedValue;
+                    }
+                });
+            }
+
+            // 呼叫 dagreUtils.render 並回傳 HTML 字串
+            const result = dagreUtils.render(transitions, options)
+                .replace(/^\s*[\r\n]/gm, '')
+                .replace(/\n+/g, '');
+            return typeof result === 'string' ? result : '';
+        });
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {
