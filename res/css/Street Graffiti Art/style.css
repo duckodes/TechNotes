@@ -455,6 +455,10 @@ aside.sidebar {
     border: 2px solid var(--border);
 }
 
+.articleMainText img {
+    width: 100%;
+}
+
 .article-images {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
