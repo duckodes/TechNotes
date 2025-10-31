@@ -898,9 +898,10 @@ const main = (async () => {
 
         for (const [key, value] of Object.entries(articles)) {
             if (Array.isArray(value)) {
-                const enriched = value.map(item => ({
+                const enriched = value.map((item, index) => ({
                     ...item,
-                    category: key
+                    category: key,
+                    categoryID: index
                 }));
                 allArticles.push(...enriched);
             }
@@ -912,7 +913,7 @@ const main = (async () => {
         const insertedYears = new Set();
         allArticles
             .sort((a, b) => b.date - a.date)
-            .forEach((article, index) => {
+            .forEach((article) => {
                 const year = new Date(article.date).getFullYear();
                 if (!insertedYears.has(year)) {
                     const yearlyDivision = document.createElement('div');
@@ -978,7 +979,7 @@ const main = (async () => {
                 card.appendChild(bottomLine);
                 card.appendChild(tagContainer);
                 card.appendChild(h5);
-                card.onclick = () => showArticle(article, article.category, index);
+                card.onclick = () => showArticle(article, article.category, article.categoryID);
 
                 wrapper.appendChild(card);
                 articleContainer.appendChild(wrapper);
