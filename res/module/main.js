@@ -91,6 +91,7 @@ const main = (async () => {
         tagCloud: 1
     };
     let pageSelect = pageSelectOption.historyTracker;
+    let stopCategoryList = false;
 
     const topic = document.querySelector('.layout>header');
     async function UpdateTopic(text) {
@@ -171,6 +172,7 @@ const main = (async () => {
             };
             categoryList.appendChild(li);
         });
+        if (stopCategoryList) return;
         if (!Object.keys(articles)[lastCategoryIndex]) {
             // renderArticles(articles, Object.keys(articles)[Object.keys(articles).length - 1]);
             switch (pageSelect) {
@@ -308,7 +310,9 @@ const main = (async () => {
             const commentKeyMap = new WeakMap();
 
             comment.render(articleBody, async (name, message, commentElement) => {
+                stopCategoryList = true;
                 const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`), { name, message });
+                stopCategoryList = false;
 
                 commentKeyMap.set(commentElement, newComment.key);
 
@@ -329,11 +333,12 @@ const main = (async () => {
             }, async (replyName, replyMessage, commentElement, replyElement) => {
                 const id = commentKeyMap.get(commentElement);
                 if (!id) return false;
-
+                stopCategoryList = true;
                 const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), {
                     name: replyName,
                     message: replyMessage
                 });
+                stopCategoryList = false;
                 const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
                 commentKeys.push(newComment.key);
                 localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
@@ -358,7 +363,9 @@ const main = (async () => {
                     const comments = snapshot.val();
                     Object.entries(comments).forEach(([id, { name, message, replies }]) => {
                         const commentElement = comment.createComment(name, message, replies, async (replyName, replyMessage, commentElement, replyElement) => {
+                            stopCategoryList = true;
                             const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), { name: replyName, message: replyMessage });
+                            stopCategoryList = false;
                             const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
                             commentKeys.push(newComment.key);
                             localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
@@ -403,8 +410,9 @@ const main = (async () => {
             async function deleteComment(uid, category, commentId, commentElement) {
                 const commentKeys = deleteID();
                 if (commentKeys.includes(commentId)) {
+                    stopCategoryList = true;
                     await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}`));
-
+                    stopCategoryList = false;
                     // 從 localStorage 移除該 ID
                     const updatedIds = commentKeys.filter(id => id !== commentId);
                     if (updatedIds.length === 0) {
@@ -422,8 +430,9 @@ const main = (async () => {
             async function deleteReplyComment(uid, category, commentId, replyId, commentElement) {
                 const commentKeys = deleteID();
                 if (commentKeys.includes(replyId)) {
+                    stopCategoryList = true;
                     await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}/replies/${replyId}`));
-
+                    stopCategoryList = false;
                     // 從 localStorage 移除該 ID
                     const updatedIds = commentKeys.filter(id => id !== replyId);
                     if (updatedIds.length === 0) {
@@ -503,7 +512,9 @@ const main = (async () => {
             const commentKeyMap = new WeakMap();
 
             comment.render(articleBody, async (name, message, commentElement) => {
+                stopCategoryList = true;
                 const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`), { name, message });
+                stopCategoryList = false;
 
                 commentKeyMap.set(commentElement, newComment.key);
 
@@ -524,11 +535,12 @@ const main = (async () => {
             }, async (replyName, replyMessage, commentElement, replyElement) => {
                 const id = commentKeyMap.get(commentElement);
                 if (!id) return false;
-
+                stopCategoryList = true;
                 const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), {
                     name: replyName,
                     message: replyMessage
                 });
+                stopCategoryList = false;
                 const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
                 commentKeys.push(newComment.key);
                 localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
@@ -553,7 +565,9 @@ const main = (async () => {
                     const comments = snapshot.val();
                     Object.entries(comments).forEach(([id, { name, message, replies }]) => {
                         const commentElement = comment.createComment(name, message, replies, async (replyName, replyMessage, commentElement, replyElement) => {
+                            stopCategoryList = true;
                             const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), { name: replyName, message: replyMessage });
+                            stopCategoryList = false;
                             const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
                             commentKeys.push(newComment.key);
                             localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
@@ -598,8 +612,9 @@ const main = (async () => {
             async function deleteComment(uid, category, commentId, commentElement) {
                 const commentKeys = deleteID();
                 if (commentKeys.includes(commentId)) {
+                    stopCategoryList = true;
                     await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}`));
-
+                    stopCategoryList = false;
                     // 從 localStorage 移除該 ID
                     const updatedIds = commentKeys.filter(id => id !== commentId);
                     if (updatedIds.length === 0) {
@@ -617,8 +632,9 @@ const main = (async () => {
             async function deleteReplyComment(uid, category, commentId, replyId, commentElement) {
                 const commentKeys = deleteID();
                 if (commentKeys.includes(replyId)) {
+                    stopCategoryList = true;
                     await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}/replies/${replyId}`));
-
+                    stopCategoryList = false;
                     // 從 localStorage 移除該 ID
                     const updatedIds = commentKeys.filter(id => id !== replyId);
                     if (updatedIds.length === 0) {
