@@ -56,10 +56,14 @@ const comment = (() => {
         const replyList = document.createElement('div');
         replyList.className = 'reply-list';
         if (replies) {
-            Object.entries(replies).forEach(([id, { name, message }]) => {
+            Object.entries(replies).forEach(([id, { name, message, nameColor }]) => {
                 const reply = document.createElement('div');
                 reply.className = 'reply-card';
-                reply.innerHTML = `<strong>${name}</strong><p>${message}</p>`;
+                if (nameColor) {
+                    reply.innerHTML = `<strong style="color: ${nameColor};">🖈 ${name}</strong><p>${message}</p>`;
+                } else {
+                    reply.innerHTML = `<strong>${name}</strong><p>${message}</p>`;
+                }
                 replyList.appendChild(reply);
             });
         }
