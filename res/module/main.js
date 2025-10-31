@@ -305,11 +305,17 @@ const main = (async () => {
 
         const allowComments = (await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/allowcomments`))).val();
         if (allowComments) {
+            const commentKeyMap = new WeakMap();
+
             comment.render(articleBody, async (name, message, commentElement) => {
                 const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`), { name, message });
+
+                commentKeyMap.set(commentElement, newComment.key);
+
                 const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
                 commentKeys.push(newComment.key);
                 localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
+
                 if (deleteID().includes(newComment.key)) {
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '刪除';
@@ -318,8 +324,32 @@ const main = (async () => {
                     });
                     commentElement.querySelector('p').appendChild(deleteButton);
                 }
+
+                return true;
+            }, async (replyName, replyMessage, commentElement, replyElement) => {
+                const id = commentKeyMap.get(commentElement);
+                if (!id) return false;
+
+                const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), {
+                    name: replyName,
+                    message: replyMessage
+                });
+                const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                commentKeys.push(newComment.key);
+                localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
+
+                if (deleteID().includes(newComment.key)) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = '刪除';
+                    deleteButton.addEventListener('click', () => {
+                        deleteReplyComment(dataKey, category, id, newComment.key, replyElement);
+                    });
+                    replyElement.querySelector('p').appendChild(deleteButton);
+                }
+
                 return true;
             });
+
             loadComments(dataKey, category);
             async function loadComments(dataKey, category) {
                 const snapshot = await get(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments`));
@@ -327,8 +357,19 @@ const main = (async () => {
                 if (snapshot.exists()) {
                     const comments = snapshot.val();
                     Object.entries(comments).forEach(([id, { name, message, replies }]) => {
-                        const commentElement = comment.createComment(name, message, replies, async (replyName, replyMessage) => {
-                            await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), { name: replyName, message: replyMessage });
+                        const commentElement = comment.createComment(name, message, replies, async (replyName, replyMessage, commentElement, replyElement) => {
+                            const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), { name: replyName, message: replyMessage });
+                            const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                            commentKeys.push(newComment.key);
+                            localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
+                            if (deleteID().includes(newComment.key)) {
+                                const deleteButton = document.createElement('button');
+                                deleteButton.textContent = '刪除';
+                                deleteButton.addEventListener('click', () => {
+                                    deleteReplyComment(dataKey, category, id, newComment.key, replyElement);
+                                });
+                                replyElement.querySelector('p').appendChild(deleteButton);
+                            }
                             return true;
                         });
                         if (deleteID().includes(id)) {
@@ -339,6 +380,19 @@ const main = (async () => {
                             });
                             commentElement.querySelector('p').appendChild(deleteButton);
                         }
+                        Object.entries(replies || {}).forEach(([replyId, { name: replyName, message: replyMessage }]) => {
+                            if (deleteID().includes(replyId)) {
+                                commentElement.querySelectorAll('.reply-card').forEach(replyElement => {
+                                    if (replyElement.textContent.trim() !== replyName.trim() + replyMessage.trim()) return;
+                                    const deleteButton = document.createElement('button');
+                                    deleteButton.textContent = '刪除';
+                                    deleteButton.addEventListener('click', () => {
+                                        deleteReplyComment(dataKey, category, id, replyId, replyElement);
+                                    });
+                                    replyElement.querySelector('p').appendChild(deleteButton);
+                                });
+                            }
+                        });
                     });
                 }
             }
@@ -361,6 +415,25 @@ const main = (async () => {
                     commentElement.remove();
 
                     console.log("已刪除留言：", commentId);
+                } else {
+                    console.warn("無權刪除這筆留言，因為不在 localStorage 中");
+                }
+            }
+            async function deleteReplyComment(uid, category, commentId, replyId, commentElement) {
+                const commentKeys = deleteID();
+                if (commentKeys.includes(replyId)) {
+                    await remove(ref(database, `technotes/data/${uid}/${category}/${index}/comments/${commentId}/replies/${replyId}`));
+
+                    // 從 localStorage 移除該 ID
+                    const updatedIds = commentKeys.filter(id => id !== replyId);
+                    if (updatedIds.length === 0) {
+                        localStorage.removeItem("commentKeys");
+                    } else {
+                        localStorage.setItem("commentKeys", JSON.stringify(updatedIds));
+                    }
+                    commentElement.remove();
+
+                    console.log("已刪除留言：", replyId);
                 } else {
                     console.warn("無權刪除這筆留言，因為不在 localStorage 中");
                 }
@@ -459,7 +532,7 @@ const main = (async () => {
                 const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
                 commentKeys.push(newComment.key);
                 localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
-                
+
                 if (deleteID().includes(newComment.key)) {
                     const deleteButton = document.createElement('button');
                     deleteButton.textContent = '刪除';
@@ -479,8 +552,19 @@ const main = (async () => {
                 if (snapshot.exists()) {
                     const comments = snapshot.val();
                     Object.entries(comments).forEach(([id, { name, message, replies }]) => {
-                        const commentElement = comment.createComment(name, message, replies, async (replyName, replyMessage) => {
-                            await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), { name: replyName, message: replyMessage });
+                        const commentElement = comment.createComment(name, message, replies, async (replyName, replyMessage, commentElement, replyElement) => {
+                            const newComment = await push(ref(database, `technotes/data/${dataKey}/${category}/${index}/comments/${id}/replies`), { name: replyName, message: replyMessage });
+                            const commentKeys = JSON.parse(localStorage.getItem("commentKeys") || "[]");
+                            commentKeys.push(newComment.key);
+                            localStorage.setItem("commentKeys", JSON.stringify(commentKeys));
+                            if (deleteID().includes(newComment.key)) {
+                                const deleteButton = document.createElement('button');
+                                deleteButton.textContent = '刪除';
+                                deleteButton.addEventListener('click', () => {
+                                    deleteReplyComment(dataKey, category, id, newComment.key, replyElement);
+                                });
+                                replyElement.querySelector('p').appendChild(deleteButton);
+                            }
                             return true;
                         });
                         if (deleteID().includes(id)) {
@@ -491,9 +575,10 @@ const main = (async () => {
                             });
                             commentElement.querySelector('p').appendChild(deleteButton);
                         }
-                        Object.entries(replies).forEach(([replyId, { name: replyName, message: replyMessage }]) => {
+                        Object.entries(replies || {}).forEach(([replyId, { name: replyName, message: replyMessage }]) => {
                             if (deleteID().includes(replyId)) {
                                 commentElement.querySelectorAll('.reply-card').forEach(replyElement => {
+                                    if (replyElement.textContent.trim() !== replyName.trim() + replyMessage.trim()) return;
                                     const deleteButton = document.createElement('button');
                                     deleteButton.textContent = '刪除';
                                     deleteButton.addEventListener('click', () => {
