@@ -457,9 +457,10 @@ aside.sidebar {
     width: 100dvw;
     height: 100dvh;
     background-color: #00000050;
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
+    visibility: hidden;
 }
 
 .image-preview {
@@ -481,11 +482,6 @@ aside.sidebar {
 .image-preview.active {
     transform: scale(1);
     opacity: 1;
-}
-
-.image-preview.unactive {
-    transform: scale(0);
-    opacity: 0;
 }
 
 footer {

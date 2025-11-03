@@ -666,23 +666,17 @@ const main = (async () => {
                 imagePreviewCtx.drawImage(img, 0, 0);
                 const dataURL = imagePreviewCanvas.toDataURL();
                 imagePreview.style.backgroundImage = `url(${dataURL})`;
-                imagePreviewContainer.style.display = 'flex';
-                requestAnimationFrame(() => {
-                    imagePreview.classList.add('active');
-                });
-
+                imagePreviewContainer.style.visibility = 'visible';
+                imagePreview.classList.add('active');
             });
         });
     }
     window.addEventListener('scroll', scrollImagePreview);
     window.addEventListener('wheel', scrollImagePreview);
     function scrollImagePreview() {
-        imagePreview.classList.add('unactive');
         imagePreview.classList.remove('active');
         setTimeout(() => {
-            imagePreview.classList.remove('unactive');
-            imagePreviewContainer.style.display = '';
-            imagePreview.style.transform = '';
+            imagePreviewContainer.style.visibility = '';
         }, 200);
     }
     function convertToTable(text) {
