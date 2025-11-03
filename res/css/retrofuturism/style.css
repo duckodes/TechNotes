@@ -483,7 +483,10 @@ aside.sidebar {
 }
 
 .image-preview {
-    width: 98%;
+    width: 100%;
+    height: auto;
+    max-width: 98vw;
+    max-height: 98vh;
     aspect-ratio: 16 / 9;
     background-size: contain;
     background-position: center;
