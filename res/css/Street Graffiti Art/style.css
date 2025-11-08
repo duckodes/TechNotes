@@ -515,6 +515,26 @@ aside.sidebar {
     opacity: 1;
 }
 
+.image-preview-next {
+    position: fixed;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    -moz-user-select: none;
+    opacity: 0.2;
+    transition: opacity 200ms linear;
+}
+
+.image-preview-next:active {
+    opacity: 1;
+}
+
+.image-preview-next:hover {
+    opacity: 1;
+}
+
 footer {
     text-align: center;
     padding: 1.5rem;
