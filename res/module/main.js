@@ -19,7 +19,11 @@ const main = (async () => {
     function initProfile(url = '', name = `無使用者資料`, title = '', employed = '', email = '', github = '', data) {
         const profile = document.querySelector('.profile');
         const profileImage = profile.querySelector('.avatar');
-        profileImage.src = url;
+        if (url !== '') {
+            profileImage.src = url;
+        } else {
+            profileImage.style.display = 'none';
+        }
         const profileName = profile.querySelector('h3');
         profileName.textContent = name;
         const profileDesc = profile.querySelectorAll('p');
@@ -57,7 +61,7 @@ const main = (async () => {
         const data = snapshot.val();
         tags = data?.tags;
         if (!dataKey) {
-            initProfile('', `無${urlSearchParams.get('user')}使用者資料`);
+            initProfile('', `無 ${urlSearchParams.get('user')} 使用者資料`);
             return;
         } else {
             UpdateTopic(data.topic);
