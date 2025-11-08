@@ -661,7 +661,7 @@ const main = (async () => {
     const imagePreviewCanvas = document.createElement('canvas');
     const imagePreviewCtx = imagePreviewCanvas.getContext('2d');
     function imageMagnifier() {
-        const imagePreviewNext = imagePreviewContainer.querySelector('.image-preview-next');
+        const imagePreviewNext = document.querySelector('.image-preview-container').querySelector('.image-preview-next');
         let lastPreviewImageIndex = 0;
         articleBody.querySelectorAll('img').forEach((img, index) => {
             img.style.cursor = 'pointer';
