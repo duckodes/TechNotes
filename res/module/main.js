@@ -1133,11 +1133,12 @@ const main = (async () => {
         let matchedArticles = [];
 
         Object.entries(articles).forEach(([key, articleList]) => {
-            articleList.forEach(article => {
+            articleList.forEach((article, index) => {
                 if (article.tags?.includes(tag)) {
                     matchedArticles.push({
                         ...article,
-                        category: key
+                        category: key,
+                        index: index
                     });
                 }
             });
@@ -1162,7 +1163,7 @@ const main = (async () => {
             const tagCloudArticle = document.createElement('div');
             tagCloudArticle.className = 'tagCloudArticle';
             tagCloudArticle.innerHTML = `${article.title}`;
-            tagCloudArticle.onclick = () => showArticle(article, article.category, index);
+            tagCloudArticle.onclick = () => showArticle(article, article.category, article.index);
 
             const tagCloudDate = document.createElement('div');
             tagCloudDate.className = 'tagCloudDate';
