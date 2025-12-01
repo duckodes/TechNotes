@@ -132,7 +132,9 @@ const main = (async () => {
         articleContainer.style.display = 'flex';
     });
 
-    if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
+    if (urlSearchParams.get('category') && urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
+        showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')], urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
+    } else if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
         layout.style.display = 'none';
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
