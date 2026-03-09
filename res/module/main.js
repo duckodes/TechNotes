@@ -811,11 +811,13 @@ const main = (async () => {
         function extractWidthHeight(attrString) {
             const widthMatch = attrString.match(/width=["']([^"']+)["']/);
             const heightMatch = attrString.match(/height=["']([^"']+)["']/);
+            const allowMatch = attrString.match(/allow=["']([^"']+)["']/);
 
             const width = widthMatch ? `width="${escapeHTML(widthMatch[1])}"` : '';
             const height = heightMatch ? `height="${escapeHTML(heightMatch[1])}"` : '';
+            const allow = (allowMatch && allowMatch[1].trim() === 'fullscreen') ? 'allow="fullscreen"' : '';
 
-            return [width, height].filter(Boolean).join(' ');
+            return [width, height, allow].filter(Boolean).join(' ');
         }
     }
 
