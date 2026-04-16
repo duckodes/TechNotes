@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout main repo with submodules
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: false  # 不要自動拉 submodule，改手動處理
           token: ${{ secrets.GITHUB_TOKEN }}
