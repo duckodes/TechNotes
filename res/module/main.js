@@ -1,16 +1,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
 import { getDatabase, ref, push, get, remove, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
-import fetcher from "./fetcher.js";
-import dateutils from "./date.utils.js";
-import themeutils from "./theme.utils.js";
-import scrollUtils from "./scroll.utils.js";
-import footer from "./footer.js";
-import textSphere from "./text.sphere.js";
-import comment from "./comment.js";
-import dagreUtils from "./dagre.utils.js";
+import {
+  fetcher,
+  firebaseConfig,
+  dateutils,
+  themeutils,
+  scrollUtils,
+  footer,
+  textSphere,
+  comment,
+  dagreUtils
+} from "./modules.js";
 
 const main = (async () => {
-    const firebaseConfig = await fetcher.load('../res/config/firebaseConfig.json');
     const app = initializeApp(firebaseConfig);
     const database = getDatabase(app);
 
