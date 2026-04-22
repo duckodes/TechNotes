@@ -15,7 +15,7 @@ const main = (async () => {
     const database = getDatabase(app);
 
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const dataKey = await findParentNodeById(urlSearchParams.size === 0 ? (await get(ref(database, 'technotes/user/DPcmhV427VQNJ9ojiOTD2aYyuE83/name'))).val() : urlSearchParams.get('user'));
+    const dataKey = urlSearchParams.size === 0 ? "DPcmhV427VQNJ9ojiOTD2aYyuE83" : await findParentNodeById(urlSearchParams.get('user'));
     function initProfile(url = '', name = `無使用者資料`, title = '', employed = '', email = '', github = '', data) {
         const profile = document.querySelector('.profile');
         const profileImage = profile.querySelector('.avatar');
@@ -35,22 +35,11 @@ const main = (async () => {
     }
     async function findParentNodeById(targetName) {
         try {
-            const rootRef = ref(database, 'technotes/user');
-            const snapshot = await get(rootRef);
-
+            const snapshot = await get(ref(database, `technotes/check/${targetName}`));
             if (!snapshot.exists()) {
                 throw new Error('資料不存在');
             }
-
-            const data = snapshot.val();
-
-            for (const [key, value] of Object.entries(data)) {
-                if (value.name === targetName) {
-                    return key;
-                }
-            }
-
-            return null;
+            return snapshot.val();
         } catch (error) {
             console.error('查找失敗：', error.message);
             return null;
@@ -133,13 +122,20 @@ const main = (async () => {
     });
 
     if (urlSearchParams.get('category') && urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
-        showArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')], urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
+        const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
+        const snapshot = await get(articleRef);
+        showArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
     } else if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
         layout.style.display = 'none';
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
-        articleBackButton.style.display = 'none';
-        await waitShowArticle((await get(ref(database, `technotes/data/${dataKey}`))).val()[urlSearchParams.get('category')][urlSearchParams.get('categoryID')], urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
+        articleBackButton.style.display = '';
+        articleBackButton.addEventListener('click', () => {
+            location.href = window.location.pathname + `?user=${urlSearchParams.get('user')}`;
+        });
+        const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
+        const snapshot = await get(articleRef);
+        await waitShowArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
         window.parent.postMessage({
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
             height: articleView.scrollHeight
@@ -149,7 +145,9 @@ const main = (async () => {
         document.body.appendChild(articleContainer);
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
-        renderArticles((await get(ref(database, `technotes/data/${dataKey}`))).val(), urlSearchParams.get('category'))
+        const categoryRef = ref(database, `technotes/data/${dataKey}`);
+        const snapshot = await get(categoryRef);
+        renderArticles(snapshot.val(), urlSearchParams.get('category'));
     } else if (urlSearchParams.get('profile') === 'true') {
         layout.style.display = 'none';
         const profile = document.querySelector('.sidebar');
@@ -160,7 +158,9 @@ const main = (async () => {
         document.body.appendChild(articleContainer);
         document.body.appendChild(articleView);
         articleView.style.padding = '1rem';
-        renderChronologicalOrder((await get(ref(database, `technotes/data/${dataKey}`))).val());
+        const dataRef = ref(database, `technotes/data/${dataKey}`);
+        const snapshot = await get(dataRef);
+        renderChronologicalOrder(snapshot.val());
     }
 
     function UpdateCategoryList(articles) {
