@@ -2,7 +2,6 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebas
 import { getDatabase, ref, push, get, remove, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
 import {
   fetcher,
-  firebaseConfig,
   dateutils,
   themeutils,
   scrollUtils,
@@ -10,10 +9,10 @@ import {
   textSphere,
   comment,
   dagreUtils
-} from "./modules.js";
+} from "./modules.min.js";
 
 const main = (async () => {
-    const app = initializeApp(firebaseConfig);
+    const app = initializeApp(fetcher.firebaseConfig);
     const database = getDatabase(app);
 
     const urlSearchParams = new URLSearchParams(window.location.search);

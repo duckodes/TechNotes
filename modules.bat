@@ -1,0 +1,1 @@
+npx esbuild res/module/modules.js --bundle --minify --format=esm --outfile=res/module/modules.min.js
