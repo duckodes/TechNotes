@@ -1,5 +1,5 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-import { getDatabase, ref, push, get, remove, onValue } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-database.js";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, push, get, remove, onValue } from "firebase/database";
 import {
   fetcher,
   dateutils,
