@@ -1,14 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, push, get, remove, onValue } from "firebase/database";
 import {
-  fetcher,
-  dateutils,
-  themeutils,
-  scrollUtils,
-  footer,
-  textSphere,
-  comment,
-  dagreUtils
+    fetcher,
+    dateutils,
+    themeutils,
+    scrollUtils,
+    footer,
+    textSphere,
+    comment,
+    dagreUtils
 } from "./modules.min.js";
 
 const main = (async () => {
@@ -47,9 +47,11 @@ const main = (async () => {
         }
     }
     let tags = [];
+    let dataName = '';
     onValue(ref(database, `technotes/user/${dataKey}`), async (snapshot) => {
         const data = snapshot.val();
         tags = data?.tags;
+        dataName = data?.name;
         if (!dataKey) {
             initProfile('', `無 ${urlSearchParams.get('user')} 使用者資料`);
             return;
@@ -86,6 +88,7 @@ const main = (async () => {
     };
     let pageSelect = pageSelectOption.historyTracker;
     let stopCategoryList = false;
+    let isPopState = false;
 
     const topic = document.querySelector('.layout>header');
     async function UpdateTopic(text) {
@@ -141,6 +144,11 @@ const main = (async () => {
             id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
             height: articleView.scrollHeight
         }, '*');
+    } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
+        articleView.style.padding = '1rem';
+        const categoryRef = ref(database, `technotes/data/${dataKey}`);
+        const snapshot = await get(categoryRef);
+        renderArticles(snapshot.val(), urlSearchParams.get('category'));
     } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
         layout.style.display = 'none';
         document.body.appendChild(articleContainer);
@@ -154,6 +162,11 @@ const main = (async () => {
         const profile = document.querySelector('.sidebar');
         profile.style.height = '100%';
         document.body.appendChild(profile);
+    } else if (urlSearchParams.get('timeline') === 'true' && urlSearchParams.get('info') === 'true') {
+        articleView.style.padding = '1rem';
+        const dataRef = ref(database, `technotes/data/${dataKey}`);
+        const snapshot = await get(dataRef);
+        renderChronologicalOrder(snapshot.val());
     } else if (urlSearchParams.get('timeline') === 'true') {
         layout.style.display = 'none';
         document.body.appendChild(articleContainer);
@@ -162,6 +175,100 @@ const main = (async () => {
         const dataRef = ref(database, `technotes/data/${dataKey}`);
         const snapshot = await get(dataRef);
         renderChronologicalOrder(snapshot.val());
+    } else if (urlSearchParams.get('tagcloud') === 'true' && urlSearchParams.get('info') === 'true') {
+        articleView.style.padding = '1rem';
+        const dataRef = ref(database, `technotes/data/${dataKey}`);
+        const snapshot = await get(dataRef);
+        queueMicrotask(() => {
+            renderTagCloud(snapshot.val());
+        });
+    } else if (urlSearchParams.get('tag') && urlSearchParams.get('page') && urlSearchParams.get('info') === 'true') {
+        articleView.style.padding = '1rem';
+        const dataRef = ref(database, `technotes/data/${dataKey}`);
+        const snapshot = await get(dataRef);
+        queueMicrotask(() => {
+            renderTagArticles(urlSearchParams.get('tag'), snapshot.val(), parseInt(urlSearchParams.get('page')));
+        });
+    }
+    window.addEventListener("popstate", async (event) => {
+        isPopState = true;
+        let urlSearchParams = new URLSearchParams(window.location.search);
+        if (urlSearchParams.get('category') && urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
+            const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
+            const snapshot = await get(articleRef);
+            showArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
+        } else if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
+            layout.style.display = 'none';
+            document.body.appendChild(articleView);
+            articleView.style.padding = '1rem';
+            articleBackButton.style.display = '';
+            articleBackButton.addEventListener('click', () => {
+                location.href = window.location.pathname + `?user=${urlSearchParams.get('user')}`;
+            });
+            const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
+            const snapshot = await get(articleRef);
+            await waitShowArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
+            window.parent.postMessage({
+                id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
+                height: articleView.scrollHeight
+            }, '*');
+        } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
+            articleView.style.padding = '1rem';
+            const categoryRef = ref(database, `technotes/data/${dataKey}`);
+            const snapshot = await get(categoryRef);
+            renderArticles(snapshot.val(), urlSearchParams.get('category'));
+        } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
+            layout.style.display = 'none';
+            document.body.appendChild(articleContainer);
+            document.body.appendChild(articleView);
+            articleView.style.padding = '1rem';
+            const categoryRef = ref(database, `technotes/data/${dataKey}`);
+            const snapshot = await get(categoryRef);
+            renderArticles(snapshot.val(), urlSearchParams.get('category'));
+        } else if (urlSearchParams.get('profile') === 'true') {
+            layout.style.display = 'none';
+            const profile = document.querySelector('.sidebar');
+            profile.style.height = '100%';
+            document.body.appendChild(profile);
+        } else if (urlSearchParams.get('timeline') === 'true' && urlSearchParams.get('info') === 'true') {
+            articleView.style.padding = '1rem';
+            const dataRef = ref(database, `technotes/data/${dataKey}`);
+            const snapshot = await get(dataRef);
+            renderChronologicalOrder(snapshot.val());
+        } else if (urlSearchParams.get('timeline') === 'true') {
+            layout.style.display = 'none';
+            document.body.appendChild(articleContainer);
+            document.body.appendChild(articleView);
+            articleView.style.padding = '1rem';
+            const dataRef = ref(database, `technotes/data/${dataKey}`);
+            const snapshot = await get(dataRef);
+            renderChronologicalOrder(snapshot.val());
+        } else if (urlSearchParams.get('tagcloud') === 'true' && urlSearchParams.get('info') === 'true') {
+            articleView.style.padding = '1rem';
+            const dataRef = ref(database, `technotes/data/${dataKey}`);
+            const snapshot = await get(dataRef);
+            queueMicrotask(() => {
+                renderTagCloud(snapshot.val());
+            });
+        } else if (urlSearchParams.get('tag') && urlSearchParams.get('page') && urlSearchParams.get('info') === 'true') {
+            articleView.style.padding = '1rem';
+            const dataRef = ref(database, `technotes/data/${dataKey}`);
+            const snapshot = await get(dataRef);
+            queueMicrotask(() => {
+                renderTagArticles(urlSearchParams.get('tag'), snapshot.val(), parseInt(urlSearchParams.get('page')));
+            });
+        }
+    });
+    function AddParamsHistory(paramsObj) {
+        if (isPopState) {
+            isPopState = false;
+            return;
+        }
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(paramsObj)) {
+            params.set(key, value);
+        }
+        window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
     }
 
     function UpdateCategoryList(articles) {
@@ -188,6 +295,11 @@ const main = (async () => {
                     break;
                 case pageSelectOption.tagCloud:
                     renderTagCloud(articles);
+                    AddParamsHistory({
+                        user: dataName,
+                        tagcloud: true,
+                        info: true
+                    });
                     break;
             }
         } else {
@@ -196,6 +308,11 @@ const main = (async () => {
     }
 
     function renderArticles(articles, category) {
+        AddParamsHistory({
+            user: dataName,
+            category: category,
+            info: true
+        });
         articleContainer.innerHTML = '';
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
@@ -457,6 +574,12 @@ const main = (async () => {
         }
     }
     function showArticle(article, category, index) {
+        AddParamsHistory({
+            user: dataName,
+            category: category,
+            categoryID: index,
+            info: true
+        });
         articleTitle.innerHTML = article.title;
 
         const imageHTML = article.images?.length
@@ -911,6 +1034,13 @@ const main = (async () => {
     }
     // 依時間排序
     function renderChronologicalOrder(articles) {
+        articleView.style.display = 'none';
+        articleContainer.style.display = 'flex';
+        AddParamsHistory({
+            user: dataName,
+            timeline: true,
+            info: true
+        });
         articleContainer.innerHTML = '';
         articleContainer.style.position = 'relative';
         articleContainer.style.width = '100%';
@@ -1022,6 +1152,8 @@ const main = (async () => {
     let isRenderTextSphere = false;
     let textSphereCanvas = document.createElement('canvas');
     function renderTagCloud(articles) {
+        articleView.style.display = 'none';
+        articleContainer.style.display = 'flex';
         articleContainer.innerHTML = '';
         const tagCloud = document.createElement('div');
         tagCloud.innerHTML = '<h1>推薦標籤</h1>';
@@ -1134,6 +1266,14 @@ const main = (async () => {
         }
     }
     function renderTagArticles(tag, articles, page = 1) {
+        articleView.style.display = 'none';
+        articleContainer.style.display = 'flex';
+        AddParamsHistory({
+            user: dataName,
+            tag: tag,
+            page: page,
+            info: true
+        });
         const pageSize = 5;
         let matchedArticles = [];
 
@@ -1215,6 +1355,22 @@ const main = (async () => {
     articleBackButton.onclick = () => {
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
+        switch (pageSelect) {
+            case pageSelectOption.historyTracker:
+                AddParamsHistory({
+                    user: dataName,
+                    timeline: true,
+                    info: true
+                });
+                break;
+            case pageSelectOption.tagCloud:
+                AddParamsHistory({
+                    user: dataName,
+                    tagcloud: true,
+                    info: true
+                });
+                break;
+        }
     }
 
     function codeAdditional() {
