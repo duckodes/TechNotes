@@ -373,6 +373,12 @@ const main = (async () => {
         return Promise.all(loadPromises);
     }
     async function waitShowArticle(article, category, index) {
+        AddParamsHistory({
+            user: dataName,
+            category: category,
+            categoryID: index,
+            info: true
+        });
         articleTitle.innerHTML = article.title;
 
         const images = await loadImages(article.images);
