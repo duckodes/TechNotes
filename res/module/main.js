@@ -9,7 +9,7 @@ import {
     textSphere,
     comment,
     dagreUtils
-} from "./modules.min.js";
+} from "../chunks/modules.min.js";
 
 const main = (async () => {
     const app = initializeApp(fetcher.firebaseConfig);
@@ -84,11 +84,14 @@ const main = (async () => {
     let lastArticles = null;
     let pageSelectOption = {
         historyTracker: 0,
-        tagCloud: 1
+        tagCloud: 1,
+        categoryIndex: 2
     };
     let pageSelect = pageSelectOption.historyTracker;
     let stopCategoryList = false;
     let isPopState = false;
+    // 分類列表
+    let categoryListData = [];
 
     const topic = document.querySelector('.layout>header');
     async function UpdateTopic(text) {
@@ -98,6 +101,7 @@ const main = (async () => {
 
     const layout = document.querySelector('.layout');
     const categoryList = document.getElementById('categoryList');
+    const section = document.getElementsByTagName('section')[0];
     const articleContainer = document.getElementById('articleContainer');
     const articleView = document.getElementById('articleView');
     const articleTitle = document.getElementById('articleTitle');
@@ -125,85 +129,42 @@ const main = (async () => {
         articleContainer.style.display = 'flex';
     });
 
-    if (urlSearchParams.get('category') && urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
-        const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
-        const snapshot = await get(articleRef);
-        showArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
-    } else if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
-        layout.style.display = 'none';
-        document.body.appendChild(articleView);
-        articleView.style.padding = '1rem';
-        articleBackButton.style.display = '';
-        articleBackButton.addEventListener('click', () => {
-            location.href = window.location.pathname + `?user=${urlSearchParams.get('user')}`;
-        });
-        const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
-        const snapshot = await get(articleRef);
-        await waitShowArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
-        window.parent.postMessage({
-            id: urlSearchParams.get('category') + urlSearchParams.get('categoryID'),
-            height: articleView.scrollHeight
-        }, '*');
-    } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
-        articleView.style.padding = '1rem';
-        const categoryRef = ref(database, `technotes/data/${dataKey}`);
-        const snapshot = await get(categoryRef);
-        renderArticles(snapshot.val(), urlSearchParams.get('category'));
-    } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
-        layout.style.display = 'none';
-        document.body.appendChild(articleContainer);
-        document.body.appendChild(articleView);
-        articleView.style.padding = '1rem';
-        const categoryRef = ref(database, `technotes/data/${dataKey}`);
-        const snapshot = await get(categoryRef);
-        renderArticles(snapshot.val(), urlSearchParams.get('category'));
-    } else if (urlSearchParams.get('profile') === 'true') {
-        layout.style.display = 'none';
-        const profile = document.querySelector('.sidebar');
-        profile.style.height = '100%';
-        document.body.appendChild(profile);
-    } else if (urlSearchParams.get('timeline') === 'true' && urlSearchParams.get('info') === 'true') {
-        articleView.style.padding = '1rem';
-        const dataRef = ref(database, `technotes/data/${dataKey}`);
-        const snapshot = await get(dataRef);
-        renderChronologicalOrder(snapshot.val());
-    } else if (urlSearchParams.get('timeline') === 'true') {
-        layout.style.display = 'none';
-        document.body.appendChild(articleContainer);
-        document.body.appendChild(articleView);
-        articleView.style.padding = '1rem';
-        const dataRef = ref(database, `technotes/data/${dataKey}`);
-        const snapshot = await get(dataRef);
-        renderChronologicalOrder(snapshot.val());
-    } else if (urlSearchParams.get('tagcloud') === 'true' && urlSearchParams.get('info') === 'true') {
-        articleView.style.padding = '1rem';
-        const dataRef = ref(database, `technotes/data/${dataKey}`);
-        const snapshot = await get(dataRef);
-        queueMicrotask(() => {
-            renderTagCloud(snapshot.val());
-        });
-    } else if (urlSearchParams.get('tag') && urlSearchParams.get('page') && urlSearchParams.get('info') === 'true') {
-        articleView.style.padding = '1rem';
-        const dataRef = ref(database, `technotes/data/${dataKey}`);
-        const snapshot = await get(dataRef);
-        queueMicrotask(() => {
-            renderTagArticles(urlSearchParams.get('tag'), snapshot.val(), parseInt(urlSearchParams.get('page')));
-        });
+    const articleMoveType = {
+        moveAll: 0,
+        onlyArticleView: 1,
+        reset: 2
     }
-    window.addEventListener("popstate", async (event) => {
-        isPopState = true;
-        let urlSearchParams = new URLSearchParams(window.location.search);
+    function ArticleMoveLayout(articleMoveType) {
+        switch (articleMoveType) {
+            case 0:
+                layout.style.display = 'none';
+                document.body.appendChild(articleContainer);
+                document.body.appendChild(articleView);
+                break;
+            case 1:
+                layout.style.display = 'none';
+                document.body.appendChild(articleView);
+                break;
+            case 2:
+                layout.style.display = '';
+                section.appendChild(articleContainer);
+                section.appendChild(articleView);
+                break;
+        }
+    }
+    defaultWebPage(urlSearchParams);
+    async function defaultWebPage(urlSearchParams) {
         if (urlSearchParams.get('category') && urlSearchParams.get('categoryID') && urlSearchParams.get('info') === 'true') {
             const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
             const snapshot = await get(articleRef);
             showArticle(snapshot.val(), urlSearchParams.get('category'), urlSearchParams.get('categoryID'));
         } else if (urlSearchParams.get('category') && urlSearchParams.get('categoryID')) {
-            layout.style.display = 'none';
-            document.body.appendChild(articleView);
+            ArticleMoveLayout(articleMoveType.onlyArticleView);
             articleView.style.padding = '1rem';
             articleBackButton.style.display = '';
             articleBackButton.addEventListener('click', () => {
-                location.href = window.location.pathname + `?user=${urlSearchParams.get('user')}`;
+                ArticleMoveLayout(articleMoveType.reset);
+                UpdateCategoryList(lastArticles);
             });
             const articleRef = ref(database, `technotes/data/${dataKey}/${urlSearchParams.get('category')}/${urlSearchParams.get('categoryID')}`);
             const snapshot = await get(articleRef);
@@ -218,9 +179,7 @@ const main = (async () => {
             const snapshot = await get(categoryRef);
             renderArticles(snapshot.val(), urlSearchParams.get('category'));
         } else if (urlSearchParams.get('category') && !urlSearchParams.get('categoryID')) {
-            layout.style.display = 'none';
-            document.body.appendChild(articleContainer);
-            document.body.appendChild(articleView);
+            ArticleMoveLayout(articleMoveType.moveAll);
             articleView.style.padding = '1rem';
             const categoryRef = ref(database, `technotes/data/${dataKey}`);
             const snapshot = await get(categoryRef);
@@ -236,9 +195,7 @@ const main = (async () => {
             const snapshot = await get(dataRef);
             renderChronologicalOrder(snapshot.val());
         } else if (urlSearchParams.get('timeline') === 'true') {
-            layout.style.display = 'none';
-            document.body.appendChild(articleContainer);
-            document.body.appendChild(articleView);
+            ArticleMoveLayout(articleMoveType.moveAll);
             articleView.style.padding = '1rem';
             const dataRef = ref(database, `technotes/data/${dataKey}`);
             const snapshot = await get(dataRef);
@@ -258,6 +215,10 @@ const main = (async () => {
                 renderTagArticles(urlSearchParams.get('tag'), snapshot.val(), parseInt(urlSearchParams.get('page')));
             });
         }
+    }
+    window.addEventListener("popstate", (event) => {
+        isPopState = true;
+        defaultWebPage(new URLSearchParams(window.location.search));
     });
     function AddParamsHistory(paramsObj) {
         if (isPopState) {
@@ -277,6 +238,7 @@ const main = (async () => {
         }
         if (!articles) return;
         lastArticles = articles;
+        categoryListData.length = 0;
         Object.keys(articles).forEach((category, index) => {
             const li = document.createElement('li');
             li.textContent = category;
@@ -285,6 +247,7 @@ const main = (async () => {
                 renderArticles(articles, category);
             };
             categoryList.appendChild(li);
+            categoryListData.push(category);
         });
         if (stopCategoryList) return;
         if (!Object.keys(articles)[lastCategoryIndex]) {
@@ -295,11 +258,6 @@ const main = (async () => {
                     break;
                 case pageSelectOption.tagCloud:
                     renderTagCloud(articles);
-                    AddParamsHistory({
-                        user: dataName,
-                        tagcloud: true,
-                        info: true
-                    });
                     break;
             }
         } else {
@@ -1158,6 +1116,11 @@ const main = (async () => {
     let isRenderTextSphere = false;
     let textSphereCanvas = document.createElement('canvas');
     function renderTagCloud(articles) {
+        AddParamsHistory({
+            user: dataName,
+            tagcloud: true,
+            info: true
+        });
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
         articleContainer.innerHTML = '';
@@ -1361,7 +1324,17 @@ const main = (async () => {
     articleBackButton.onclick = () => {
         articleView.style.display = 'none';
         articleContainer.style.display = 'flex';
+        if (lastCategoryIndex != null) {
+            pageSelect = pageSelectOption.categoryIndex;
+        }
         switch (pageSelect) {
+            case pageSelectOption.categoryIndex:
+                AddParamsHistory({
+                    user: dataName,
+                    category: categoryListData[lastCategoryIndex],
+                    info: true
+                });
+                break;
             case pageSelectOption.historyTracker:
                 AddParamsHistory({
                     user: dataName,
